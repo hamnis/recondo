@@ -15,5 +15,21 @@ class MIMETypeTest {
     val mimeType = MIMEType("application/xml")
     Assert.assertEquals("application", mimeType.mainType)
     Assert.assertEquals("xml", mimeType.subType)
+    Assert.assertEquals(0, mimeType.parameters.size)
+  }
+  
+  @Test
+  def testSimpleEquals() {
+    val mimeType = MIMEType("application/xml")
+    Assert.assertEquals(mimeType, APPLICATION_XML)
+    Assert.assertEquals(0, mimeType.parameters.size)
+  }
+  
+  @Test
+  def testNotSoSimple() {
+    val mimeType = MIMEType("application/xml;type=session")
+    Assert.assertEquals("application", mimeType.mainType)
+    Assert.assertEquals("xml", mimeType.subType)
+    Assert.assertEquals(1, mimeType.parameters.size)
   }
 }
