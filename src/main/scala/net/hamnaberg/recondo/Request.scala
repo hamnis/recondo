@@ -5,10 +5,11 @@ import java.net.URI
 
 /**
  * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
- * @version $Revision: #5 $ $Date: 2008/09/15 $
+ * @version $Revision: $
  */
-class Request(requestURI : URI, Method : Method) {
-  val headers = new Headers;
+class Request(val uri : URI, val Method : Method) {
+  val headers = new HeadersBuilder();
+  var payload : Option[Payload] = None;
   
 }
 

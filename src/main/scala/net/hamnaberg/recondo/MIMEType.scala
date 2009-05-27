@@ -20,6 +20,7 @@ class MIMEType (val mainType : String, val subType : String, val parameters : Li
   def matches(mimeType : MIMEType) : Boolean = {
     if (this == ALL)
       mainType.equals(mimeType.mainType) && (subType == mimeType.subType || subType == "*")
+    else false
   }
 
   override def equals(obj: Any) : Boolean = {
