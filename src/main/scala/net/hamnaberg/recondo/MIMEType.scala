@@ -12,7 +12,10 @@ import javax.activation.{MimeTypeParseException, MimeType}
  */
 
 class MIMEType (val mainType : String, val subType : String, val parameters : List[Parameter]) {
-
+  require(mainType != null)
+  require(subType != null)
+  require(parameters != null)
+  
   def matches(mimeType : String) : Boolean ={
     matches(MIMEType(mimeType));
   }
@@ -23,12 +26,10 @@ class MIMEType (val mainType : String, val subType : String, val parameters : Li
     else false
   }
 
-  override def equals(obj: Any) : Boolean = {
-    if (obj.isInstanceOf[MIMEType]) {
-      val mimeType = obj.asInstanceOf[MIMEType]
-      return mimeType.mainType == mainType && mimeType.subType == subType
-    }
-    return false
+  override def equals(obj: Any) : Boolean = obj match {
+    case MIMEType(mainType, subType) =>
+            this.mainType == mainType && this.subType == subType
+    case _ => false
   }
 
 
@@ -53,7 +54,11 @@ object MIMEType {
     new MIMEType(mime.getPrimaryType, mime.getSubType, params)
   }
 
-    def apply(mainType : String, subType : String) = {
-      new MIMEType(mainType, subType, Nil)
-    }
+  def apply(mainType : String, subType : String) = {
+    new MIMEType(mainType, subType, Nil)
+  }
+
+  def unapply(mimeType : MIMEType) : Some[(String, String)] = {
+    Some(mimeType.mainType, mimeType.subType)
+  }
 }
