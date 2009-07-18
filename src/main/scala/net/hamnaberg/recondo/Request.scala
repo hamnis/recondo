@@ -9,8 +9,8 @@ import java.net.URI
  */
 class Request(val uri : URI, val method : Method, val headers : Headers, val payload : Option[Payload], val credentials : Option[Credentials]) {
 
-  def credentials_(c : Option[Credentials]) : Request = {
-    if (credentials == c) this else new Request(uri, method, headers, payload, c)
+  def setCredentials(c : Option[Credentials]) : Request = {
+    new Request(uri, method, headers, payload, c)
   }
 
   def addHeader(h : Header) : Request = {
