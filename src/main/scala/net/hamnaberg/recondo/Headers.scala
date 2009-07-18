@@ -2,7 +2,7 @@ package net.hamnaberg.recondo
 
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: #5 $ $Date: 2008/09/15 $
  */
 class Headers(h : Map[String, List[Header]]) extends Iterable[Header]{

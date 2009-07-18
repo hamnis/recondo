@@ -21,7 +21,7 @@ class MIMETypeTest {
   @Test
   def testSimpleEquals() {
     val mimeType = MIMEType("application/xml")
-    Assert.assertEquals(mimeType, APPLICATION_XML)
+    Assert.assertEquals(mimeType, MIMEType.APPLICATION_XML)
     Assert.assertEquals(0, mimeType.parameters.size)
   }
   

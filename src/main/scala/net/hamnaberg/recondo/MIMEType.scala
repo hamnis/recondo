@@ -7,7 +7,7 @@ import scala.collection.jcl.Conversions._
 import javax.activation.{MimeTypeParseException, MimeType}
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: #5 $ $Date: 2008/09/15 $
  */
 
@@ -21,7 +21,7 @@ class MIMEType (val mainType : String, val subType : String, val parameters : Li
   }
 
   def matches(mimeType : MIMEType) : Boolean = {
-    if (this == ALL)
+    if (this == MIMEType.ALL)
       mainType.equals(mimeType.mainType) && (subType == mimeType.subType || subType == "*")
     else false
   }
@@ -38,14 +38,9 @@ class MIMEType (val mainType : String, val subType : String, val parameters : Li
   }
 }
 
-object APPLICATION_XML extends MIMEType("application", "xml", Nil)
-object APPLICATION_XHTML extends MIMEType("application", "xhtml+xml", Nil)
-object TEXT_XML extends MIMEType("text", "xml", Nil)
-object TEXT_HTML extends MIMEType("text", "html", Nil)
-object ALL extends MIMEType("*", "*", Nil);
 
 object MIMEType {
-  def apply(mimeType : String) = {
+  def apply(mimeType : String) = {  
     val mime = new MimeType(mimeType)
     val params = Collections.list(mime.getParameters.getNames).
             asInstanceOf[java.util.List[String]].
@@ -61,4 +56,10 @@ object MIMEType {
   def unapply(mimeType : MIMEType) : Some[(String, String)] = {
     Some(mimeType.mainType, mimeType.subType)
   }
+
+  object APPLICATION_XML extends MIMEType("application", "xml", Nil)
+  object APPLICATION_XHTML extends MIMEType("application", "xhtml+xml", Nil)
+  object TEXT_XML extends MIMEType("text", "xml", Nil)
+  object TEXT_HTML extends MIMEType("text", "html", Nil)
+  object ALL extends MIMEType("*", "*", Nil);
 }

@@ -1,7 +1,7 @@
 package net.hamnaberg.recondo
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
 
@@ -18,12 +18,13 @@ object Credentials {
   def toHeader(credentials : Credentials, authorizationHeader : Header) {
     
   }
+
+  case object BASIC extends AuthMethod("Basic");
+  case object DIGEST extends AuthMethod("Digest");
 }
+
+abstract case class AuthMethod(val name : String);
 
 case class UsernamePasswordCredentials(val identifier : String, val password : String, val method : AuthMethod) extends Credentials
 
 
-abstract case class AuthMethod(val name : String);
-
-case object BASIC extends AuthMethod("Basic");
-case object DIGEST extends AuthMethod("Digest");
