@@ -1,37 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>net.hamnaberg.recondo</groupId>
-    <artifactId>recondo</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>Recondo</name>
-    <packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.hamnaberg.recondo</groupId>
+  <artifactId>recondo</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Recondo</name>
+  <packaging>pom</packaging>
 
-    <dependencies>
-      <dependency>
-       <groupId>org.scala-lang</groupId>
-       <artifactId>scala-library</artifactId>
-       <version>2.7.4</version>
-      </dependency>
-      <dependency>
-       <groupId>junit</groupId>
-       <artifactId>junit-dep</artifactId>
-       <version>4.5</version>
-       <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>1.5.2</version>
-      </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.7.4</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit-dep</artifactId>
+      <version>4.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+  </dependencies>
 
-    <build>
-      <sourceDirectory>src/main/scala</sourceDirectory>
-      <testSourceDirectory>src/test/scala</testSourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
         <executions>
           <execution>
             <goals>
@@ -40,8 +41,15 @@
             </goals>
           </execution>
         </executions>
-            </plugin>
-        </plugins>
-    </build>
+        <inherited>true</inherited>
+      </plugin>
+    </plugins>
+  </build>
+
+  <modules>
+    <module>recondo-api</module>
+    <module>recondo-core</module>
+  </modules>
+
 
 </project>
