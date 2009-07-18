@@ -21,7 +21,7 @@ class HeaderTest {
     val header = new Header("foo", "foo")
     Assert.assertEquals(header, Header(Tuple2("foo", "foo")));
     Assert.assertEquals(header, Header("foo" -> "foo"));
-    Assert.assertEquals(header.directives, Map("foo" -> null))
+    Assert.assertEquals(header.directives, Map("foo" -> None))
   }
 
   @Test
@@ -30,6 +30,6 @@ class HeaderTest {
     val header = new Header("Cache-Control", headerValue)
     Assert.assertEquals(header, Header(Tuple2("Cache-Control", headerValue)));
     Assert.assertEquals(header, Header("Cache-Control" -> headerValue));
-    Assert.assertEquals(header.directives, Map("private" -> null, "max-age" -> "12", "s-max-age" -> "213", "snabel" -> null))
+    Assert.assertEquals(header.directives, Map("private" -> None, "max-age" -> Some("12"), "s-max-age" -> Some("213"), "snabel" -> None))
   }
 }

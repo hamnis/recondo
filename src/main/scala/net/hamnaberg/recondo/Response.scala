@@ -1,19 +1,38 @@
 package net.hamnaberg.recondo
 
+
+import org.joda.time.DateTime
+
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-class Response(val status: Status, val headers: Headers, val payload: Option[Payload]) {
-  def getETag: Option[Tag] = {
-    headers.firstHeaderValue("ETag") match {
+class Response(val status: Status, val headers: Headers, val payload: Option[Payload]) extends PayloadContainer {
+  lazy val ETag: Option[Tag] = {
+    headers firstHeaderValue("ETag") match {
       case Some(value) => Some(Tag(value))
-      case None => None
+      case _ => None
     }
+  }
+  
+  lazy val lastModified : Option[DateTime] = {
+    headers firstHeader("LastModified") match {
+      case Some(h) => Some(Header.fromHttpDate(h))
+      case _ => None
+    }
+  }
+
+  lazy val allowedMethods : Set[Method] = {
+    headers firstHeader "Allow" match {
+      case Some(x) => Set() ++ x.directives.keySet map {y => Method(y)}
+      case _ => Set()
+    }    
   }
 }
 
-sealed abstract case class Status(code: Int, message: String) {
+sealed abstract case class Status(code: Int, message: String)
+
+object Status {
   case object CONTINUE extends Status(100, "Continue");
   case object SWITCHING_PROTOCOLS extends Status(101, "Switching Protocols");
   case object OK extends Status(200, "OK");

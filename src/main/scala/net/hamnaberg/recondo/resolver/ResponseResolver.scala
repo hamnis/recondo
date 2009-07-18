@@ -1,4 +1,7 @@
-package net.hamnaberg.recondo
+package net.hamnaberg.recondo.resolver
+
+
+import mutable.Request
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
