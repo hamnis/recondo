@@ -5,10 +5,17 @@ package net.hamnaberg.recondo
  * @version $Revision: #5 $ $Date: 2008/09/15 $
  */
 class Response(val status : Status, val headers : Headers, val payload : Option[Payload]) {
-   
+   def getETag : Option[Tag] = {
+     headers.firstHeaderValue("ETag") match {
+       case Some(value) => Some(Tag(value))
+       case None => None
+     }     
+   }
 }
 
-sealed abstract class Status(val code : Int, val message : String)
+
+
+sealed abstract case class Status(code : Int, message : String)
 
 case object CONTINUE extends Status(100, "Continue");
 case object SWITCHING_PROTOCOLS extends Status(101, "Switching Protocols");
