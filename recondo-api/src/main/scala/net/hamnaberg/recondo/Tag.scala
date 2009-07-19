@@ -34,13 +34,11 @@ object Tag {
   def apply(value : String) = {
     require(value != null)
     require(value != "")
-    val copy = if (value.startsWith("W/")) true -> value.substring(2) else false -> value;
+    val copy = if (value.startsWith("W/")) value.substring(2) -> true else value -> false;
 
     copy match {
-      case Tuple2(false, "*") => Tag.ALL;
-      case Tuple2(true, x) => new Tag(extract(x), true);
-      case Tuple2(false, x) => new Tag(extract(x), false);
-      case _ => throw new IllegalArgumentException("Not a valid ETag")
+      case Tuple2("*", false) => Tag.ALL;
+      case Tuple2(x, y) => new Tag(extract(x), y);
     }
   }
 
