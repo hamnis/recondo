@@ -58,10 +58,10 @@ case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSin
 
   override def toString() = {
     val builder = new StringBuilder
-    builder.append("If-Match: ").append(ifMatch).
+    builder.append("If-Match: ").append(ifMatch).append("\r\n").
             append("If-None-Match: ").append(ifNonMatch).append("\r\n").
             append("If-Unmodified-Since: ").append(ifModifiedSince).append("\r\n").
-            append("If-Modified-Since: ").append(ifUnModifiedSince);
+            append("If-Modified-Since: ").append(ifUnModifiedSince).append("\r\n");
     builder.toString
   }
 

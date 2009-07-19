@@ -35,4 +35,15 @@ class HeadersTest {
     Assert.assertFalse("Headers was not empty", h.isEmpty)
     Assert.assertEquals("Headers was not empty", 2, h.size)
   }
+
+  @Test
+  def testAddAndRemoveHeaders() {
+    val allow = Header("Allow", "GET")
+    val h : Headers = Headers() ++ List(allow, Header("If-Match", new Tag("1234", false).format))
+    Assert.assertFalse("Headers was not empty", h.isEmpty)
+    Assert.assertEquals("Headers was not empty", 2, h.size)
+    val h2 = h - allow
+    Assert.assertFalse("Headers was not empty", h2.isEmpty)
+    Assert.assertEquals("Headers had the wrong size", 1, h2.size)
+  }
 }

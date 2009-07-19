@@ -36,12 +36,24 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
   def +(header: Header): Headers = {
     val h = add(getHeaders(header.name), header)
     h match {
-      case Nil => this
+      case List() => this
       case x => {
         val heads = headers + (header.name -> x)
         new Headers(heads)
       }
     }
+  }
+
+  def -(header : Header) : Headers = {
+    val x = getHeaders(header.name) - header;
+    x match {
+      case List() => new Headers(headers - header.name)
+      case x => new Headers(headers + (header.name -> x))
+    }
+  }
+
+  def -(header : String) : Headers = {
+    new Headers(headers - header)    
   }
 
   def ++(heads: Iterable[Header]): Headers = {
