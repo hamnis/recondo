@@ -1,4 +1,4 @@
-package net.hamnaberg.recondo
+package net.hamnaberg.recondo.mutable
 
 
 import org.joda.time.DateTime
@@ -37,7 +37,7 @@ import org.joda.time.DateTime
  *
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  */
-case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSince: Option[DateTime], ifUnModifiedSince: Option[DateTime]) {
+private[recondo] case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSince: Option[DateTime], ifUnModifiedSince: Option[DateTime]) {
   def addIfMatch(tag: Tag) = tag match {
     case Tag.ALL => Conditionals(List(Tag.ALL), ifUnModifiedSince, false)
     case x => if (!ifMatch.contains(x)) Conditionals(x :: ifMatch, ifUnModifiedSince, false) else this
@@ -65,7 +65,7 @@ case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSin
     builder.toString
   }
 
-  def toHeaders() = {
+  private[recondo] def toHeaders() = {
     var headers = Headers()
     headers ++= ifMatch.map(x => Header(HeaderConstants.IF_MATCH, x.format))
     headers ++= ifNonMatch.map(x => Header(HeaderConstants.IF_NONE_MATCH, x.format))

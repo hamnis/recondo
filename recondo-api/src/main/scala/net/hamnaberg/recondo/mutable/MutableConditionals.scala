@@ -22,7 +22,7 @@ class MutableConditionals {
     c = c.setUnModifiedSince(dateTime)
   }
 
-  private[mutable] def toHeaders() = {
+  private[recondo] def toHeaders() = {
     c.toHeaders
   }
 }

@@ -7,7 +7,7 @@ import java.net.URI
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : $
  */
-class Request(val uri: URI, val method: Method) extends PayloadContainer {
+class RequestBuilder(val uri: URI, val method: Method) extends PayloadContainer {
   private[this] var h: Headers = Headers()
   val conditionals: MutableConditionals = new MutableConditionals()
   var credentials: Option[Credentials] = None
@@ -18,7 +18,7 @@ class Request(val uri: URI, val method: Method) extends PayloadContainer {
     this.h += h
   }
 
-  def headers() = {
+  private def headers() = {
     var condititonalHeaders = conditionals.toHeaders
     var heads = h;
     condititonalHeaders foreach {x => heads = heads - x.name}
@@ -26,12 +26,16 @@ class Request(val uri: URI, val method: Method) extends PayloadContainer {
   }
 }
 
-object Request {
+object RequestBuilder {
   def apply(requestURI: URI) = {
-    new Request(requestURI, Method.GET)
+    new RequestBuilder(requestURI, Method.GET)
   }
 
   def apply(requestURI: String) = {
-    new Request(URI.create(requestURI), Method.GET)
+    new RequestBuilder(URI.create(requestURI), Method.GET)
+  }
+
+  implicit def requestWrapper(rb : RequestBuilder) : Request = {
+    new Request(rb.uri, rb.method, rb.headers, rb.credentials, rb.payload)
   }
 }
