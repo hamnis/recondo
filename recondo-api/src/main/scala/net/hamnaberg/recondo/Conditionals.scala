@@ -38,13 +38,14 @@ import org.joda.time.DateTime
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  */
 case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSince: Option[DateTime], ifUnModifiedSince: Option[DateTime]) {
-
-  def addIfMatch(tag: Tag) = {
-    Conditionals(tag :: ifMatch, ifUnModifiedSince, false)
+  def addIfMatch(tag: Tag) = tag match {
+    case Tag.ALL => Conditionals(List(Tag.ALL), ifUnModifiedSince, false)
+    case x => if (!ifMatch.contains(x)) Conditionals(x :: ifMatch, ifUnModifiedSince, false) else this
   }
 
-  def addNoneIfMatch(tag: Tag) = {
-    Conditionals(tag :: ifNonMatch, ifModifiedSince, true)
+  def addIfNoneMatch(tag: Tag) = tag match {
+    case Tag.ALL => Conditionals(List(Tag.ALL), ifUnModifiedSince, true)
+    case x => if (!ifNonMatch.contains(x)) Conditionals(x :: ifNonMatch, ifModifiedSince, true) else {this}
   }
 
   def setModifiedSince(dateTime: Option[DateTime]) = {
@@ -56,7 +57,7 @@ case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSin
   }
 
   def toHeaders() = {
-    Headers() 
+    Headers()
   }
 }
 
