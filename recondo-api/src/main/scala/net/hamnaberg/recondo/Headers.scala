@@ -8,12 +8,7 @@ package net.hamnaberg.recondo
 class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
   private[this] val headers = Map() ++ h.elements
 
-  def firstHeader(name: String): Option[Header] = {
-    getHeaders(name) match {
-      case Some(value) => value.reverse.firstOption
-      case None => None
-    }
-  }
+  def firstHeader(name: String): Option[Header] = getHeaders(name).reverse.firstOption
 
   def firstHeaderValue(name: String): Option[String] = {
     firstHeader(name) match {
@@ -22,38 +17,60 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     }
   }
 
-  def getHeaders(name: String): Option[List[Header]] = {
-    headers get name
+  def getHeaders(name: String): List[Header] = {
+    val h = headers get name
+    h match {
+      case Some(x) => x
+      case None => Nil
+    }
   }
 
-  private def contains(h: Header): Boolean = {
-    getHeaders(h.name) match {
-      case Some(headers) => headers.contains(h)
-      case None => false
-    }
+  override def isEmpty: Boolean = headers.isEmpty
+
+  def size: Int = headers.size
+
+  def contains(h: Header): Boolean = {
+    getHeaders(h.name) contains h
   }
 
   def +(header: Header): Headers = {
-    if (contains(header)) {
-      this
-    }
-    else {
-      val h = add(getHeaders(header.name), header)
-      h match {
-        case List() => this
-        case List(_*) => {
-          val heads = headers + (header.name -> h)
-          new Headers(heads)
-        }
+    val h = add(getHeaders(header.name), header)
+    h match {
+      case Nil => this
+      case x => {
+        val heads = headers + (header.name -> x)
+        new Headers(heads)
       }
     }
   }
 
-  private def add(list: Option[List[Header]], header: Header): List[Header] = {
-    list match {
-      case Some(value) => if (value contains header) Nil else header :: value
-      case None => List(header)
+  def ++(heads: Iterable[Header]): Headers = {
+    var headers = this.headers
+    heads foreach {
+      header => {
+        val res = add(getHeaders(header.name), header)
+        res match {
+          case Nil =>
+          case x => headers += (header.name -> x)
+        }
+      }
     }
+    new Headers(headers)
+  }
+
+  private def add(list: List[Header], header: Header): List[Header] = {
+    list match {
+      case List() => List(header)
+      case x => if (x contains header) Nil else header :: x
+    }
+  }
+
+  override def toString = {
+    val builder = new StringBuilder
+    for (h <- this) {
+      builder.append(h.name).append(": ").append(h.value).append("\r\n")
+    }
+    builder.toString
   }
 
   def elements: Iterator[Header] = {

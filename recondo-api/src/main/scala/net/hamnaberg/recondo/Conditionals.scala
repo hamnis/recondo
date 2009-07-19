@@ -56,8 +56,28 @@ case class Conditionals(ifMatch: List[Tag], ifNonMatch: List[Tag], ifModifiedSin
     Conditionals(ifMatch, dateTime, false)
   }
 
+  override def toString() = {
+    val builder = new StringBuilder
+    builder.append("If-Match: ").append(ifMatch).
+            append("If-None-Match: ").append(ifNonMatch).append("\r\n").
+            append("If-Unmodified-Since: ").append(ifModifiedSince).append("\r\n").
+            append("If-Modified-Since: ").append(ifUnModifiedSince);
+    builder.toString
+  }
+
   def toHeaders() = {
-    Headers()
+    var headers = Headers()
+    headers ++= ifMatch.map(x => Header(HeaderConstants.IF_MATCH, x.format))
+    headers ++= ifNonMatch.map(x => Header(HeaderConstants.IF_NONE_MATCH, x.format))
+    ifUnModifiedSince.map(x => Header.toHttpDate(HeaderConstants.IF_UNMODIFIED_SINCE, x)) match {
+      case Some(x) => headers += x
+      case None =>
+    }
+    ifModifiedSince.map(x => Header.toHttpDate(HeaderConstants.IF_MODIFIED_SINCE, x)) match {
+      case Some(x) => headers += x
+      case None => 
+    }
+    headers
   }
 }
 

@@ -1,4 +1,3 @@
-
 package net.hamnaberg.recondo
 
 
@@ -8,16 +7,16 @@ import org.joda.time.{DateTime, DateTimeZone}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
- * @version $Revision: #5 $ $Date: 2008/09/15 $
+ * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-case class Header(name : String, value : String) {
+case class Header(name: String, value: String) {
   require(name != null)
   require(value != null)
-  lazy val directives : Map[String, Option[String]] = parseValue(value)
-  
+  lazy val directives: Map[String, Option[String]] = parseValue(value)
+
   override def toString() = name + ": " + value
 
-  private[this] def parseValue(value : String) : Map[String, Option[String]] = {
+  private[this] def parseValue(value: String): Map[String, Option[String]] = {
     val foo = value.split(",").toList map {
       x => {
         val trimmed = x.trim
@@ -31,22 +30,29 @@ case class Header(name : String, value : String) {
 
 object Header {
   private val PATTERN_RFC1123 = "EEE, dd MMM yyyy HH:mm:ss 'GMT'";
-  
-  def apply(tuple : Tuple2[String, String]) = {
+
+  def apply(tuple: Tuple2[String, String]) = {
     new Header(tuple._1, tuple._2)
   }
 
-  def fromHttpDate(header : Header) = {
+  def fromHttpDate(header: Header) = {
     val formatter = DateTimeFormat.forPattern(PATTERN_RFC1123).
             withZone(DateTimeZone.forID("UTC")).
             withLocale(Locale.US);
     formatter.parseDateTime(header.value);
   }
 
-  def toHttpDate(name : String, time : DateTime) = {
+  def toHttpDate(name: String, time: DateTime) = {
     val formatter = DateTimeFormat.forPattern(PATTERN_RFC1123).
             withZone(DateTimeZone.forID("UTC")).
             withLocale(Locale.US);
     new Header(name, formatter.print(time))
   }
+}
+
+object HeaderConstants {
+  val IF_MATCH = "If-Match"
+  val IF_NONE_MATCH = "If-None-Match"
+  val IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
+  val IF_MODIFIED_SINCE = "If-Modified-Since"
 }

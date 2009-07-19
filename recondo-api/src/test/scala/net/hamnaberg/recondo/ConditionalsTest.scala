@@ -135,6 +135,14 @@ class ConditionalsTest {
   }
 
   @Test
+  def testAddNoneMatchUnModifiedSinceHeaders() {
+    val tag = new Tag("124", false)
+    val dateOption = Some(new DateTime())
+    val conditionals = Conditionals().addIfNoneMatch(tag).setModifiedSince(dateOption)    
+    Assert.assertEquals("Headers did not have the correct number", 2, conditionals.toHeaders.size)
+  }
+
+  @Test
   def testAddMatchUnModifiedSince() {
     val tag = new Tag("124", false)
     val dateOption = Some(new DateTime())
