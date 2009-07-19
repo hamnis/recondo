@@ -20,7 +20,7 @@ class Request(val uri: URI, val method: Method) extends PayloadContainer {
 
   def addHeader(h: Header) {
     require(h != null)
-    headers + h
+    headers += h
   }
 }
 
