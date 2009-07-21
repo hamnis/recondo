@@ -1,12 +1,14 @@
 package net.hamnaberg.recondo
 
 
+import collection.immutable.ListMap
+
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
 class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
-  private[this] val headers = Map() ++ h.elements
+  private[this] val headers = ListMap() ++ h
 
   def firstHeader(name: String): Option[Header] = getHeaders(name).reverse.firstOption
 
@@ -76,6 +78,20 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
       case x => if (x contains header) Nil else header :: x
     }
   }
+
+
+  override def equals(obj: Any) = {
+    if (obj.isInstanceOf[Headers]) {
+      val h = obj.asInstanceOf[Headers]
+      elements.toList == h.elements.toList
+    }
+    else {
+      false
+    }
+  }
+
+
+  override def hashCode = 31 * elements.toList.hashCode
 
   override def toString = {
     val builder = new StringBuilder

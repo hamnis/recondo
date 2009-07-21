@@ -14,6 +14,21 @@ class HeadersTest {
     val h = Headers()
     Assert.assertTrue("Headers was not empty", h.isEmpty)
   }
+  @Test
+  def testEmptyEquals() {
+    val h = Headers()
+    Assert.assertEquals("Headers were not equal", h, Headers())
+    Assert.assertEquals("Headers were not equal", h.hashCode, Headers().hashCode)
+  }
+
+  @Test
+  def testSimpleEquals() {
+    val h = Headers() ++ List(Header("Allow", "GET"), Header("Cache-Control", "private"), Header("Foo", "bar"))
+    Assert.assertFalse("Headers were not equal", h eq Headers())
+    Assert.assertFalse("Headers were not equal", int2Integer(h.hashCode) eq int2Integer(Headers().hashCode))
+    Assert.assertEquals("Headers were not equal", h eq Headers() ++ h)
+    Assert.assertEquals("Headers were not equal", int2Integer(h.hashCode) eq int2Integer((Headers() ++ h).hashCode))
+  }
 
   @Test
   def testAddHeader() {
