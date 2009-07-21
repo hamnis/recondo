@@ -7,7 +7,7 @@ package net.hamnaberg.recondo
  */
 
 case class Parameter(name : String, value : String) {
-  override def toString() = name + " " + value
+  override def toString = name + " " + value
 }
 
 object Parameter {

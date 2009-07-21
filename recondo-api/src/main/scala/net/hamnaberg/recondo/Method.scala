@@ -11,6 +11,7 @@ object Method {
   object DELETE extends Method("DELETE");
   object GET extends Method("GET");
   object HEAD extends Method("HEAD");
+  object OPTIONS extends Method("OPTIONS");
   object POST extends Method("POST");
   object PUT extends Method("PUT");
   object TRACE extends Method("TRACE")

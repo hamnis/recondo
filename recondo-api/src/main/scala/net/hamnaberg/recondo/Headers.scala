@@ -1,14 +1,14 @@
 package net.hamnaberg.recondo
 
 
-import collection.immutable.ListMap
+import org.joda.time.DateTime
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
 class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
-  private[this] val headers = ListMap() ++ h
+  private[this] val headers = Map() ++ h
 
   def firstHeader(name: String): Option[Header] = getHeaders(name).reverse.firstOption
 
@@ -46,7 +46,7 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     }
   }
 
-  def -(header : Header) : Headers = {
+  def -(header: Header): Headers = {
     val x = getHeaders(header.name) - header;
     x match {
       case List() => new Headers(headers - header.name)
@@ -54,8 +54,8 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     }
   }
 
-  def -(header : String) : Headers = {
-    new Headers(headers - header)    
+  def -(header: String): Headers = {
+    new Headers(headers - header)
   }
 
   def ++(heads: Iterable[Header]): Headers = {
@@ -79,17 +79,18 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     }
   }
 
+  def hasHeader(name: String) = !getHeaders(name).isEmpty
+
 
   override def equals(obj: Any) = {
     if (obj.isInstanceOf[Headers]) {
       val h = obj.asInstanceOf[Headers]
-      elements.toList == h.elements.toList
+      toList == h.toList
     }
     else {
       false
     }
   }
-
 
   override def hashCode = 31 * elements.toList.hashCode
 
@@ -101,6 +102,36 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     builder.toString
   }
 
+  private[recondo] def isCacheable: Boolean = {
+    import HeaderConstants._
+    if (contains(Header(VARY, "*"))) return false
+    val interestingHeaderNames = Set(CACHE_CONTROL, PRAGMA, EXPIRES, LAST_MODIFIED)
+    val cacheableHeaders = new Headers(headers.filter(interestingHeaderNames contains _._1)).toList
+    if (cacheableHeaders.isEmpty) {
+      return false;
+    }
+    else {
+      val dateHeaderValue = firstHeader(DATE) match {
+        case Some(h) => Header.fromHttpDate(h)
+        case None => new DateTime() //Should never happen, but this is useful for test cases...
+      }
+
+      for (h <- cacheableHeaders) {
+        val ret = h match {
+          case Header(CACHE_CONTROL, v) => v.contains("max-age") && !(v.contains("no-store") || v.contains("no-cache"))
+          case Header(PRAGMA, v) => !(v.contains("no-cache") || v.contains("no-store"))
+          case Header(EXPIRES, _) => dateHeaderValue.isBefore(Header.fromHttpDate(h))
+          case Header(LAST_MODIFIED, _) => {
+            val lastModified = Header.fromHttpDate(h)
+            dateHeaderValue.isAfter(lastModified) || dateHeaderValue.equals(lastModified)
+          }
+        }
+        if (!ret) return false
+      }
+      return true
+    }
+  }
+  
   def elements: Iterator[Header] = {
     val iterable = for{
       (x, y) <- headers

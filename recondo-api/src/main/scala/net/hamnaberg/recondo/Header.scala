@@ -53,4 +53,11 @@ object HeaderConstants {
   val IF_NONE_MATCH = "If-None-Match"
   val IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
   val IF_MODIFIED_SINCE = "If-Modified-Since"
+  val CACHE_CONTROL = "Cache-Control"
+  val DATE = "Date"
+  val PRAGMA = "Pragma"
+  val ETAG = "ETag"
+  val EXPIRES = "Expires"
+  val LAST_MODIFIED = "Last-Modified"
+  val VARY = "Vary"
 }
