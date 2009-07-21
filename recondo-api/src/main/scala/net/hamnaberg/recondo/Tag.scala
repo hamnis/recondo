@@ -19,7 +19,6 @@ package net.hamnaberg.recondo
  * @version $Revision: $
  */
 case class Tag(opaque : String, weak : Boolean) {
-  require(opaque != null)
 
   def format : String = {
     val formatted = if ("*" == opaque) opaque else "\"" + opaque + "\"";
@@ -32,7 +31,6 @@ case class Tag(opaque : String, weak : Boolean) {
 
 object Tag {
   def apply(value : String) = {
-    require(value != null)
     require(value != "")
     val copy = if (value.startsWith("W/")) value.substring(2) -> true else value -> false;
 

@@ -10,13 +10,11 @@ import org.joda.time.{DateTime, DateTimeZone}
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
 case class Header(name: String, value: String) {
-  require(name != null)
-  require(value != null)
   lazy val directives: Map[String, Option[String]] = parseValue(value)
 
   override def toString() = name + ": " + value
 
-  private[this] def parseValue(value: String): Map[String, Option[String]] = {
+  private def parseValue(value: String): Map[String, Option[String]] = {
     val foo = value.split(",").toList map {
       x => {
         val trimmed = x.trim

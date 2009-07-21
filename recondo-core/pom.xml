@@ -10,5 +10,15 @@
   <artifactId>recondo-core</artifactId>
   <name>Recondo :: Core</name>
   <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>recondo-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>recondo-storage-api</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

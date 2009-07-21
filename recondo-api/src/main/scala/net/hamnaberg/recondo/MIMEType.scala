@@ -4,7 +4,7 @@ package net.hamnaberg.recondo
 
 import java.util.Collections
 import scala.collection.jcl.Conversions._
-import javax.activation.{MimeTypeParseException, MimeType}
+import javax.activation.{MimeType}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -12,9 +12,6 @@ import javax.activation.{MimeTypeParseException, MimeType}
  */
 
 class MIMEType (val mainType : String, val subType : String, val parameters : List[Parameter]) {
-  require(mainType != null)
-  require(subType != null)
-  require(parameters != null)
   
   def matches(mimeType : String) : Boolean ={
     matches(MIMEType(mimeType));
@@ -57,9 +54,9 @@ object MIMEType {
     Some(mimeType.mainType, mimeType.subType)
   }
 
-  object APPLICATION_XML extends MIMEType("application", "xml", Nil)
-  object APPLICATION_XHTML extends MIMEType("application", "xhtml+xml", Nil)
-  object TEXT_XML extends MIMEType("text", "xml", Nil)
-  object TEXT_HTML extends MIMEType("text", "html", Nil)
-  object ALL extends MIMEType("*", "*", Nil);
+  case object APPLICATION_XML extends MIMEType("application", "xml", Nil)
+  case object APPLICATION_XHTML extends MIMEType("application", "xhtml+xml", Nil)
+  case object TEXT_XML extends MIMEType("text", "xml", Nil)
+  case object TEXT_HTML extends MIMEType("text", "html", Nil)
+  case object ALL extends MIMEType("*", "*", Nil);
 }

@@ -1,4 +1,4 @@
-package net.hamnaberg.recondo.mutable
+package net.hamnaberg.recondo
 
 
 import org.joda.time.DateTime
