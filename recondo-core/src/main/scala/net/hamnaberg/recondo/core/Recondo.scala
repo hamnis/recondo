@@ -14,7 +14,6 @@ class Recondo(storage: Storage, resolver: ResponseResolver) {
 }
 
 object Recondo {
-
   private def isCacheableRequest(request: Request) = request match {
     case Request(_, GET, _, _, _) => true
     case _ => false
