@@ -66,14 +66,15 @@ class HeadersTest {
   @Test
   def testIsCacheable {
     val time = new DateTime(2009, 7, 21, 23, 0, 0, 0)
-    Assert.assertFalse("Headers were cacheable", Headers().isCacheable)
+    Assert.assertTrue("Headers were not cacheable", Headers().isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() + Header("Cache-Control", "private")).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() + Header("Cache-Control", "max-age=50,no-store")).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() + Header("Cache-Control", "private,no-cache,no-store")).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() + Header("Pragma", "no-store")).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() + Header("Pragma", "no-cache")).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() + Header("Pragma", "no-cache,no-store")).isCacheable)
-    Assert.assertFalse("Headers were cacheable", (Headers() + Header("ETag", new Tag("1244", false).format)).isCacheable)
+    Assert.assertTrue("Headers were not cacheable", (Headers() + Header("ETag", new Tag("1244", false).format)).isCacheable)
+    Assert.assertTrue("Headers were not cacheable", (Headers() + Header("Foo", "bar")).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header("ETag", new Tag("1244", false).format), Header("Cache-Control", "no-store"))).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header.toHttpDate("Last-Modified", time), Header.toHttpDate("Date", time.minusMinutes(4)))).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header.toHttpDate("Expires", time), Header.toHttpDate("Date", time))).isCacheable)

@@ -1,6 +1,5 @@
 package net.hamnaberg.recondo.core
 
-
 import resolver.ResponseResolver
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

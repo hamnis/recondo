@@ -49,15 +49,23 @@ object Header {
 }
 
 object HeaderConstants {
-  val IF_MATCH = "If-Match"
-  val IF_NONE_MATCH = "If-None-Match"
-  val IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
-  val IF_MODIFIED_SINCE = "If-Modified-Since"
+  val ACCEPT = "Accept";
+  val ACCEPT_LANGUAGE = "Accept-Language";
+  val ACCEPT_CHARSET = "Accept-Charset";
+  val AGE = "Age";
+  val ALLOW = "Allow";
   val CACHE_CONTROL = "Cache-Control"
+  val CONTENT_TYPE = "Content-Type";
   val DATE = "Date"
-  val PRAGMA = "Pragma"
   val ETAG = "ETag"
   val EXPIRES = "Expires"
+  val IF_MATCH = "If-Match"
+  val IF_MODIFIED_SINCE = "If-Modified-Since"
+  val IF_NONE_MATCH = "If-None-Match"
+  val IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
   val LAST_MODIFIED = "Last-Modified"
+  val LOCATION = "Location";
+  val PRAGMA = "Pragma"
   val VARY = "Vary"
+  val WARNING = "Warning";
 }
