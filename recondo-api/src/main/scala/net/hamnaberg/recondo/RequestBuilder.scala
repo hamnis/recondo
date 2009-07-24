@@ -13,15 +13,15 @@ class RequestBuilder private (val uri: URI, val method: Method, private[this] va
     new RequestBuilder(uri, method, headers, conditionals, credentials, payload)
   }
 
-  def setCondtionals(c: Conditionals) = {
+  def condtionals(c: Conditionals) = {
     new RequestBuilder(uri, method, headers, c, credentials, payload)
   }
 
-  def setCredentials(c: Credentials) = {
+  def credentials(c: Credentials) = {
     new RequestBuilder(uri, method, headers, conditionals, Some(c), payload)
   }
 
-  def setPayload(p: Payload) = {
+  def payload(p: Payload) = {
     new RequestBuilder(uri, method, headers, conditionals, credentials, Some(p))
   }
 
