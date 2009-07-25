@@ -58,6 +58,9 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
   def -(header: String): Headers = {
     new Headers(headers - header)
   }
+  def --(header: Iterable[String]): Headers = {
+    new Headers(headers -- header)
+  }
 
   def ++(heads: Iterable[Header]): Headers = {
     var headers = this.headers
