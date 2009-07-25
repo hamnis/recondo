@@ -24,9 +24,9 @@ case class Preferences(accept: List[Preference[MIMEType]], acceptLang: List[Pref
 
   private[recondo] def toHeaders() = {
     var headers = Headers()
-    if (!accept.isEmpty) headers += Header(HeaderConstants.ACCEPT, accept.reverse().mkString(","))
-    if (!acceptLang.isEmpty) headers += Header(HeaderConstants.ACCEPT_LANGUAGE, acceptLang.reverse().mkString(","))
-    if (!acceptCharset.isEmpty) headers += Header(HeaderConstants.ACCEPT_CHARSET, acceptCharset.reverse().mkString(","))
+    if (!accept.isEmpty) headers += Header(HeaderConstants.ACCEPT, accept.reverse.mkString(","))
+    if (!acceptLang.isEmpty) headers += Header(HeaderConstants.ACCEPT_LANGUAGE, acceptLang.reverse.mkString(","))
+    if (!acceptCharset.isEmpty) headers += Header(HeaderConstants.ACCEPT_CHARSET, acceptCharset.reverse.mkString(","))
     headers
   }
 }
