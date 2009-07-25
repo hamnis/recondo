@@ -8,6 +8,7 @@ import java.io.InputStream
  */
 
 trait Payload {
-  def getInputStream() : InputStream;
-  def getMIMEType() : MIMEType;
+  def getInputStream() : InputStream
+  def getMIMEType() : MIMEType
+  def isAvailable : Boolean
 }
