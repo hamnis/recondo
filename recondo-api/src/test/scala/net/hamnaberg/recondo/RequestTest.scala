@@ -8,13 +8,13 @@ import org.mockito.Mockito._
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : $
  */
-class RequestBuilderTest {
+class RequestTest {
 
   @Test
   def testConstruct() {
-    val request = RequestBuilder(URI.create("foo"))
+    val request = Request(URI.create("foo"))
     Assert.assertEquals(Method.GET, request.method)
-    val request2 = RequestBuilder("foo")
+    val request2 = Request("foo")
     Assert.assertEquals(Method.GET, request.method)
     Assert.assertEquals(Headers(), request.headers)
     Assert.assertEquals(URI.create("foo"), request.uri)
@@ -22,7 +22,7 @@ class RequestBuilderTest {
 
   @Test
   def testCredentials() {
-    val request = RequestBuilder(URI.create("foo"))
+    val request = Request(URI.create("foo"))
     val credentials = mock(classOf[Credentials])
     val req2 = request.credentials(credentials)
     Assert.assertNotSame(request, req2)
@@ -32,16 +32,16 @@ class RequestBuilderTest {
 
   @Test
   def testConditionals() {
-    val request = RequestBuilder(URI.create("foo"))
+    val request = Request(URI.create("foo"))
     val conditionals = Conditionals()
-    val req2 = request.condtionals(conditionals)
+    val req2 = request.conditionals(conditionals)
     Assert.assertNotSame(request, req2)
     Assert.assertEquals(request.conditionals, req2.conditionals)
   }
 
   @Test
   def testPayload() {
-    val request = RequestBuilder(URI.create("foo"))
+    val request = Request(URI.create("foo"))
     val payload = mock(classOf[Payload])
     val req2 = request.payload(payload)
     Assert.assertNotSame(request, req2)
