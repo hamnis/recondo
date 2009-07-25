@@ -64,13 +64,13 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
 
     item match {
       case None if(isCacheableResponse(resolvedResponse)) => cache(r, resolvedResponse)
-      case Some(x) if(r.method == HEAD) => updateHeadersFromResolved(resolvedResponse, x.response)
-      case Some(x) if(resolvedResponse.status == Status.NOT_MODIFIED) => updateHeadersFromResolved(resolvedResponse, x.response)
+      case Some(x) if(r.method == HEAD) => updateCacheFromResolved(resolvedResponse, x.response)
+      case Some(x) if(resolvedResponse.status == Status.NOT_MODIFIED) => updateCacheFromResolved(resolvedResponse, x.response)
       case _ => resolvedResponse
     }
   }
 
-  private[this] def updateHeadersFromResolved(resolvedResponse: Response, cachedResponse: Response) = {
+  private[this] def updateCacheFromResolved(resolvedResponse: Response, cachedResponse: Response) = {
     resolvedResponse
   }
 
@@ -96,7 +96,17 @@ object Recondo
 
 private[core] object Helper {
   private val safeMethods = Set(GET, HEAD, TRACE, OPTIONS)
-  private val cacheableStatuses = List(Status.OK, Status.NON_AUTHORITATIVE_INFORMATION, Status.MULTIPLE_CHOICES, Status.MOVED_PERMANENTLY, Status.GONE)
+  private val cacheableStatuses = Set(Status.OK, Status.NON_AUTHORITATIVE_INFORMATION, Status.MULTIPLE_CHOICES, Status.MOVED_PERMANENTLY, Status.GONE)
+  private val unmodifiableHeaders = Set(
+    "Connection",
+    "Keep-Alive",
+    "Proxy-Authenticate",
+    "Proxy-Authorization",
+    "TE",
+    "Trailers",
+    "Transfer-Encoding",
+    "Upgrade"
+    )
 
   def isSafeRequest(r: Request): Boolean = safeMethods contains r.method
 
