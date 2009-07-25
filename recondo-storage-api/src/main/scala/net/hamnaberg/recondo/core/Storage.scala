@@ -8,13 +8,13 @@ import java.net.URI
  * @version $Revision : $
  */
 trait Storage {
-  def get(request: Request): CacheItem
+  def get(request: Request): Option[CacheItem]
 
-  def put(key: Key, item: CacheItem)
+  def put(key: Key, item: CacheItem): Response
 
-  def invalidate(uri: URI)
+  def invalidate(uri: URI): Unit
 
-  def invalidate(key: Key, item: CacheItem)
+  def invalidate(key: Key, item: CacheItem): Unit
 
-  def clear()
+  def clear(): Unit
 }
