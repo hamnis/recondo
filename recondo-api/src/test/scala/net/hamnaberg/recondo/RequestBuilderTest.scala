@@ -24,7 +24,7 @@ class RequestBuilderTest {
   def testCredentials() {
     val request = RequestBuilder(URI.create("foo"))
     val credentials = mock(classOf[Credentials])
-    val req2 = request.setCredentials(credentials)
+    val req2 = request.credentials(credentials)
     Assert.assertNotSame(request, req2)
     Assert.assertEquals(None, request.credentials)
     Assert.assertEquals(Some(credentials), req2.credentials)
@@ -34,7 +34,7 @@ class RequestBuilderTest {
   def testConditionals() {
     val request = RequestBuilder(URI.create("foo"))
     val conditionals = Conditionals()
-    val req2 = request.setCondtionals(conditionals)
+    val req2 = request.condtionals(conditionals)
     Assert.assertNotSame(request, req2)
     Assert.assertEquals(request.conditionals, req2.conditionals)
   }
@@ -43,7 +43,7 @@ class RequestBuilderTest {
   def testPayload() {
     val request = RequestBuilder(URI.create("foo"))
     val payload = mock(classOf[Payload])
-    val req2 = request.setPayload(payload)
+    val req2 = request.payload(payload)
     Assert.assertNotSame(request, req2)
     Assert.assertEquals(None, request.payload)
     Assert.assertEquals(Some(payload), req2.payload)

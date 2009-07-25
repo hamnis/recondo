@@ -21,7 +21,7 @@ class RequestBuilder private (val uri: URI, val method: Method, private[this] va
     new RequestBuilder(uri, method, headers, conditionals, Some(c), payload)
   }
 
-  def payload(p: Payload) = {
+  def payload(p: Payload) : RequestBuilder = {
     new RequestBuilder(uri, method, headers, conditionals, credentials, Some(p))
   }
 
