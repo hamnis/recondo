@@ -1,6 +1,7 @@
 package net.hamnaberg.recondo.core
 
 import resolver.ResponseResolver
+import Method._
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
