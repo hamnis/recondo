@@ -42,36 +42,40 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   }
 
   private[this] def rewriteResponse(request: Request, response: Response): Response = {
-    if (request.method == GET) {
-      response.ETag match {
-        case Some(x) if (request.conditionals.ifNonMatch.contains(x)) => new Response(Status.NOT_MODIFIED, response.headers, None)
-        case _ => response
-      }
-    }
-    else {
-      response
+    response.ETag match {
+      case Some(x) if (request.method == GET && request.conditionals.ifNonMatch.contains(x)) => new Response(Status.NOT_MODIFIED, response.headers, None)
+      case _ => response
     }
   }
 
   private[this] def unconditionalResolve(r: Request): Response = resolve(r, None)
 
-  private[this] def resolve(r: Request, item: Option[CacheItem]) = {
-    val resolvedResponse = executeRequest(r, item)
-
+  private[this] def resolve(request: Request, item: Option[CacheItem]) = {
+    val resolvedResponse = executeRequest(request, item)
+    
     item match {
-      case Some(x) if (resolvedResponse.status == Status.OK) => storage.invalidate(Key(r, x.response), x)
-    }
-
-    item match {
-      case None if(isCacheableResponse(resolvedResponse)) => cache(r, resolvedResponse)
-      case Some(x) if(r.method == HEAD) => updateCacheFromResolved(resolvedResponse, x.response)
-      case Some(x) if(resolvedResponse.status == Status.NOT_MODIFIED) => updateCacheFromResolved(resolvedResponse, x.response)
-      case _ => resolvedResponse
+      case Some(x) => {
+        if (resolvedResponse.status == Status.OK) {
+          storage.invalidate(Key(request, x.response), x)
+        }
+        if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) {
+          updateCacheFromResolved(request, resolvedResponse, x.response)
+        }
+        else {
+          resolvedResponse
+        }
+      }
+      case None if(isCacheableResponse(resolvedResponse)) => cache(request, resolvedResponse)
+      case None => resolvedResponse
     }
   }
 
-  private[this] def updateCacheFromResolved(resolvedResponse: Response, cachedResponse: Response) = {
-    resolvedResponse
+  private[this] def updateCacheFromResolved(request: Request, resolvedResponse: Response, cachedResponse: Response) = {
+    val updatedHeaders = resolvedResponse.headers -- Helper.unmodifiableHeaders
+    val cachedHeaders = cachedResponse.headers.asMap
+    val newHeaders = cachedHeaders ++ updatedHeaders.asMap
+    val response = new Response(cachedResponse.status, new Headers(newHeaders), cachedResponse.payload)
+    storage.put(Key(request, response), CacheItem(response))
   }
 
   private[this] def cache(request: Request, response: Response) = {
@@ -97,7 +101,8 @@ object Recondo
 private[core] object Helper {
   private val safeMethods = Set(GET, HEAD, TRACE, OPTIONS)
   private val cacheableStatuses = Set(Status.OK, Status.NON_AUTHORITATIVE_INFORMATION, Status.MULTIPLE_CHOICES, Status.MOVED_PERMANENTLY, Status.GONE)
-  private val unmodifiableHeaders = Set(
+  val unmodifiableHeaders = Set(
+    "Age",
     "Connection",
     "Keep-Alive",
     "Proxy-Authenticate",
@@ -147,7 +152,7 @@ private[core] object Helper {
     }
   }
   
-  def calculateHeaders(r: Request) = {
+  def mergeHeaders(r: Request) = {
     var condititonalHeaders = r.conditionals.toHeaders
     var heads = r.headers;
     condititonalHeaders foreach {heads -= _.name}

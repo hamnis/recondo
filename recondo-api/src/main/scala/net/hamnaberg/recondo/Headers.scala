@@ -11,6 +11,8 @@ import HeaderConstants._
 class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
   private[this] val headers = Map() ++ h
 
+  def first(name: String): Header = headers(name).reverse.first
+
   def firstHeader(name: String): Option[Header] = getHeaders(name).reverse.firstOption
 
   def firstHeaderValue(name: String): Option[String] = {
@@ -78,6 +80,7 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
 
   def contains(name: String) = !getHeaders(name).isEmpty
 
+  private[recondo] def asMap = headers;
 
   override def equals(obj: Any) = {
     if (obj.isInstanceOf[Headers]) {
