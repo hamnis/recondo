@@ -13,14 +13,15 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   def request(r: Request): Response = request(r, false)
 
   def request(r: Request, force: Boolean): Response = {
-    if (!isCacheableRequest(r)) {
-      if (!isSafeRequest(r)) {
+    val request = mergeHeaders(r)
+    if (!isCacheableRequest(request)) {
+      if (!isSafeRequest(request)) {
         storage.invalidate(r.uri)
       }
-      executeRequest(r, None)
+      executeRequest(request, None)
     }
     else {
-      getFromCache(r, force)
+      getFromCache(request, force)
     }
   }
 
@@ -38,7 +39,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   }
 
   private[this] def handleStale(request: Request, response: Response): Request = {
-    Helper.prepareConditionalRequest(request, response)
+    prepareConditionalRequest(request, response)
   }
 
   private[this] def rewriteResponse(request: Request, response: Response): Response = {
@@ -56,7 +57,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     item match {
       case Some(x) => {
         if (resolvedResponse.status == Status.OK) {
-          storage.invalidate(Key(request, x.response), x)
+          storage.invalidate(Key(request, x.response))
         }
         if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) {
           updateCacheFromResolved(request, resolvedResponse, x.response)
@@ -84,15 +85,12 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   }
 
   private[this] def executeRequest(request: Request, item: Option[CacheItem]) = {
-    try {
-      resolver.resolve(request)
-    }
-    catch {
-      case e:IOException => item match {
-        case Some(x) => Helper.warn(x.response)
-        case None => throw new RuntimeException(e)
+      val resolved = resolver.resolve(request)
+      item match {
+        case Some(x) if (resolved.isLeft) => Helper.warn(x.response)
+        case None if (resolved.isLeft) => throw new RuntimeException(resolved.left.get)
+        case _ => resolved.right.get
       }
-    }
   }
 }
 
@@ -157,5 +155,6 @@ private[core] object Helper {
     var heads = r.headers;
     condititonalHeaders foreach {heads -= _.name}
     heads ++ condititonalHeaders
+    r.headers(heads)
   }
 }
