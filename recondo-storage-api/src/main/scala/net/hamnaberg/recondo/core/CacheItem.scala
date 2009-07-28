@@ -42,9 +42,9 @@ class CacheItem(val response: Response, val cacheTime: DateTime) {
   private[this] def calculateMaxAge(cacheControlHeader: Option[Header], now: Long, cacheTime: Long):Seconds = {
     cacheControlHeader match {
       case Some(x) if (x.value contains "max-age") => {
-        val ma = CacheItem.stringToLong(x.directives("max-age"))
+        val ma = CacheItem.stringToLong(x.directives("max-age") getOrElse("0"))
         val age = now - cacheTime
-        val remaining = ((ma * 1000L) - age) / 1000L 
+        val remaining = ((ma * 1000L) - age) / 1000L
         Seconds.seconds(remaining.toInt)
       }
       case _ => Seconds.seconds(-1)
