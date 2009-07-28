@@ -10,11 +10,11 @@ import java.net.URI
 trait Storage {
   def get(request: Request): Option[CacheItem]
 
-  def put(key: Key, item: CacheItem): Response
+  def put(key: Key, item: Response): CacheItem
 
   def invalidate(uri: URI): Unit
 
-  def invalidate(key: Key, item: CacheItem): Unit
+  def invalidate(key: Key): Unit
 
   def clear(): Unit
 }
