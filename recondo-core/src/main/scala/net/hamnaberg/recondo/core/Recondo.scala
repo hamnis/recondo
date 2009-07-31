@@ -81,7 +81,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
 
   private[this] def cache(request: Request, response: Response): Response = {
     val key = Key(request, response)
-    storage.put(key, CacheItem(response))
+    storage.put(key, response)
   }
 
   private[this] def executeRequest(request: Request, item: Option[CacheItem]) = {

@@ -71,6 +71,8 @@
     <module>recondo-api</module>
     <module>recondo-storage-api</module>
     <module>recondo-core</module>
+    <module>resolvers</module>
+    <module>storage</module>
   </modules>
 
 
