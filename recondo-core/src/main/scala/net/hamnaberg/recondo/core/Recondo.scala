@@ -71,15 +71,15 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     }
   }
 
-  private[this] def updateCacheFromResolved(request: Request, resolvedResponse: Response, cachedResponse: Response) = {
+  private[this] def updateCacheFromResolved(request: Request, resolvedResponse: Response, cachedResponse: Response): Response = {
     val updatedHeaders = resolvedResponse.headers -- Helper.unmodifiableHeaders
     val cachedHeaders = cachedResponse.headers.asMap
     val newHeaders = cachedHeaders ++ updatedHeaders.asMap
     val response = new Response(cachedResponse.status, new Headers(newHeaders), cachedResponse.payload)
-    storage.put(Key(request, response), CacheItem(response))
+    storage.put(Key(request, response), response)
   }
 
-  private[this] def cache(request: Request, response: Response) = {
+  private[this] def cache(request: Request, response: Response): Response = {
     val key = Key(request, response)
     storage.put(key, CacheItem(response))
   }

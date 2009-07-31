@@ -5,7 +5,7 @@ import java.io.{InputStream, ByteArrayInputStream}
 import org.apache.commons.io.IOUtils
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
 

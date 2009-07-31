@@ -5,7 +5,7 @@ import java.nio.charset.Charset
 import java.util.Locale
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : $
  */
 

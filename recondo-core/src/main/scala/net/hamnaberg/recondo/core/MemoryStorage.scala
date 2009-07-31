@@ -32,7 +32,7 @@ class MemoryStorage extends Storage {
     }
     val res = CacheItem(new Response(response.status, response.headers, payload))
     map += key -> res
-    res
+    res.response
   }
 
   def get(request: Request) = map.find(x => x._1.uri == request.uri && x._1.vary.matches(request)).map(_._2)
