@@ -8,7 +8,7 @@ import org.apache.commons.io.input.ClosedInputStream
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-class FilePayload(val file: File, val mimeType: MIMEType) extends Payload {
+case class FilePayload(val file: File, val mimeType: MIMEType) extends Payload {
 
   def getMIMEType() = mimeType
 

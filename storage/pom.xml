@@ -15,7 +15,7 @@
     <dependency>
       <groupId>net.hamnaberg.recondo</groupId>
       <artifactId>recondo-storage-api</artifactId>
-      <version>${project.version}</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
