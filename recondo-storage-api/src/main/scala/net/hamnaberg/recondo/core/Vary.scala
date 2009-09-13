@@ -7,6 +7,8 @@ package net.hamnaberg.recondo.core
  */
 case class Vary(variations : Map[String, String]) {
 
+  def this() = this(Map.empty)
+
   def matches(request: Request) : Boolean = {
     val list = variations.map(x => Header(x)).toList
     list.forall(x => request.headers.contains(x))
