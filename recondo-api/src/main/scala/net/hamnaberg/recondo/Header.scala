@@ -10,7 +10,7 @@ import org.joda.time.{DateTime, DateTimeZone}
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
 case class Header(name: String, value: String) {
-  lazy val directives: Map[String, Option[String]] = parseValue(value) // todo: change from option to empty string to denote empty value ? good idea?
+  lazy val directives: Map[String, Option[String]] = parseValue(value)
 
   override def toString() = name + ": " + value
 
