@@ -5,11 +5,22 @@ import org.joda.time.DateTime
 import HeaderConstants._
 
 /**
+ * TODO:
+ * - make the headers a Map of String, String.
+ * -- extends a map like I do in httpcache4j.
+ * - comparison of strings are always done case insensitive.
+ *
+ */
+
+
+/**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
 class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
   private[this] val headers = Map() ++ h
+
+  def this() = this(Map());
 
   def first(name: String): Header = headers(name).reverse.first
 
@@ -123,14 +134,15 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     val cacheableHeaders = new Headers(headers.filter(interestingHeaderNames contains _._1)).toList
     val dateHeaderValue = firstHeader(DATE) match {
       case Some(h) => Header.fromHttpDate(h)
-      case None => new DateTime() //Should never happen, but this is useful for test cases...
+      case None => return false;
     }
 
     for (h <- cacheableHeaders) {
-      val ret = analyzeCachability(h, dateHeaderValue)
-      if (!ret) return false
+      if (!analyzeCachability(h, dateHeaderValue)) {
+        return false
+      }
     }
-    return true
+    contains(LAST_MODIFIED) || contains(ETAG) || contains(EXPIRES)
   }
 
   private def analyzeCachability(h: Header, dateHeaderValue: DateTime): Boolean = h match {
@@ -149,6 +161,6 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
 
 object Headers {
   def apply(): Headers = {
-    return new Headers(Map.empty)
+    new Headers(Map.empty)
   }
 }

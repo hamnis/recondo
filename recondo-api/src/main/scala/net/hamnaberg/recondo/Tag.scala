@@ -20,6 +20,8 @@ package net.hamnaberg.recondo
  */
 case class Tag(opaque : String, weak : Boolean) {
 
+  def this(tag: String) = this(tag, false)
+
   def format : String = {
     val formatted = if ("*" == opaque) opaque else "\"" + opaque + "\"";
     if (weak) "W/" + formatted else formatted;
