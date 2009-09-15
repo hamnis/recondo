@@ -3,7 +3,6 @@ package net.hamnaberg.recondo.storage
 import core.{Vary, Key}
 import java.io._
 import org.apache.commons.codec.digest.DigestUtils
-import org.apache.commons.io.IOUtils
 
 private[recondo] class FileManager(baseDirectory: File) {
   val files = FileManager.ensureDirectoryExists(new File(baseDirectory, "files"))
@@ -38,30 +37,5 @@ private[recondo] object FileManager {
       throw new IllegalArgumentException(String.format("Directory %s did not exist, and could not be created", directory));
     }
     directory
-  }
-}
-
-object StreamUtils {
-  
-  def close(c:Closeable) {
-    try {
-      c.close
-    }
-    catch {
-      case e:IOException => 
-    }
-  }
-
-  def using[T <: Closeable](c: T)(f: T => Unit) = {
-    try {
-      f(c)
-    }
-    finally {
-      close(c)
-    }
-  }
-
-  def copy(is: InputStream, os: OutputStream) {
-    IOUtils.copy(is, os);
   }
 }
