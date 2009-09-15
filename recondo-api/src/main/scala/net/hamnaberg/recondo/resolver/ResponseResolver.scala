@@ -8,5 +8,6 @@ import java.io.IOException
  * @version $Revision: #5 $ $Date: 2008/09/15 $
  */
 trait ResponseResolver {
-  def resolve(request : Request) : Either[IOException, Response];
+  @throws(classOf[IOException])
+  def resolve(request : Request) : Option[Response]
 }

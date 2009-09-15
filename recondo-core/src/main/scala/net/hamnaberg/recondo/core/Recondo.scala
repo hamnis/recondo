@@ -56,9 +56,6 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     
     item match {
       case Some(x) => {
-        if (resolvedResponse.status == Status.OK) {
-          storage.invalidate(Key(request, x.response))
-        }
         if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) {
           updateCacheFromResolved(request, resolvedResponse, x.response)
         }
@@ -66,7 +63,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
           resolvedResponse
         }
       }
-      case None if(isCacheableResponse(resolvedResponse)) => cache(request, resolvedResponse)
+      case None if(isCacheableResponse(resolvedResponse)) => storage.insert(request, resolvedResponse)
       case None => resolvedResponse
     }
   }
@@ -76,20 +73,22 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     val cachedHeaders = cachedResponse.headers.asMap
     val newHeaders = cachedHeaders ++ updatedHeaders.asMap
     val response = new Response(cachedResponse.status, new Headers(newHeaders), cachedResponse.payload)
-    storage.put(Key(request, response), response)
-  }
-
-  private[this] def cache(request: Request, response: Response): Response = {
-    val key = Key(request, response)
-    storage.put(key, response)
+    storage.update(request, response)
   }
 
   private[this] def executeRequest(request: Request, item: Option[CacheItem]) = {
-      val resolved = resolver.resolve(request)
-      item match {
-        case Some(x) if (resolved.isLeft) => Helper.warn(x.response)
-        case None if (resolved.isLeft) => throw new RuntimeException(resolved.left.get)
-        case _ => resolved.right.get
+      try {
+        val resolved = resolver.resolve(request)
+        resolved match {
+          case Some(x) => x
+          case None => throw new RuntimeException("No response from resolver")
+        }
+      }
+      catch {
+        case e:IOException => item match {
+          case Some(x) => Helper.warn(x.response)
+          case None => throw new RuntimeException(e)
+        }
       }
   }
 }

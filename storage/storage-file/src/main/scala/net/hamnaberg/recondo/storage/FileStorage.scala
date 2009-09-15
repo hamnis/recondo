@@ -27,10 +27,16 @@ class FileStorage(val baseDirectory:File) extends Storage {
     }
   }
 
-  def put(key: Key, item: Response) = {
+
+  def update(request: Request, response: Response) = {
+    val key = Key(request, response)
+    insertImpl(key, response)
+  }
+
+  def insertImpl(key: Key, item: Response) = {
     val payload = item.payload match {
       case Some(x) if (x.isInstanceOf[FilePayload]) => Some(x)
-      case Some(x) => Some(new FilePayload(manager.createFile(key, x.getInputStream), x.getMIMEType))
+      case Some(x) => Some(new FilePayload(manager.createFile(key, x.inputStream), x.getMIMEType))
       case None => None
     }
     val cacheItem = CacheItem(new Response(item.status, item.headers, payload))
