@@ -13,9 +13,9 @@ class ByteArrayPayload(stream: InputStream, m: MIMEType) extends Payload {
   val bytes = IOUtils.toByteArray(stream)
   val mimeType = m;
 
-  def getInputStream() = new ByteArrayInputStream(bytes)
+  def inputStream = new ByteArrayInputStream(bytes)
 
-  def getMIMEType() = mimeType
+  def getMIMEType = mimeType
 
   def isAvailable = true
 }

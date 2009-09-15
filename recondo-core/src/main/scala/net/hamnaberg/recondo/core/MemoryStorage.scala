@@ -17,17 +17,22 @@ class MemoryStorage extends Storage {
   
   def clear() = map.clear
 
-  def invalidate(key: Key) = map -= key
+  protected def invalidate(key: Key) = map -= key
 
   def invalidate(uri: URI) {
     val iterable = map.filter(_._1.uri == uri).map(_._1)
     map --= iterable
   }
 
-  def put(key: Key, response: Response) = {
+  def update(request: Request, response: Response) ={
+    val key = Key(request, response)
+    insertImpl(key, response)
+  }
+
+  def insertImpl(key: Key, response: Response) = {
     val payload = response.payload match {
       case Some(p) if (p.isInstanceOf[ByteArrayPayload]) => Some(p)
-      case Some(p) => Some(new ByteArrayPayload(p.getInputStream, p.getMIMEType))
+      case Some(p) => Some(new ByteArrayPayload(p.inputStream, p.getMIMEType))
       case None => None
     }
     val res = CacheItem(new Response(response.status, response.headers, payload))

@@ -10,9 +10,9 @@ import org.apache.commons.io.input.ClosedInputStream
  */
 case class FilePayload(val file: File, val mimeType: MIMEType) extends Payload {
 
-  def getMIMEType() = mimeType
+  def getMIMEType = mimeType
 
-  def getInputStream() = if (isAvailable) new FileInputStream(file) else ClosedInputStream.CLOSED_INPUT_STREAM
+  def inputStream = if (isAvailable) new FileInputStream(file) else ClosedInputStream.CLOSED_INPUT_STREAM
 
   def isAvailable = file.exists && file.canRead
 }

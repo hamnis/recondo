@@ -10,7 +10,7 @@ import java.io.InputStream
 
 class InputStreamPayload(s: InputStream, val mimeType: MIMEType) extends Payload {
   var avail = false
-  val stream = new DelegatingInputStream(s) {
+  val inputStream = new DelegatingInputStream(s) {
     override def read(b: Array[Byte]) = {
       if (avail) avail = false;
       super.read(b)
@@ -28,8 +28,6 @@ class InputStreamPayload(s: InputStream, val mimeType: MIMEType) extends Payload
   };
   
   def getMIMEType() = mimeType
-
-  def getInputStream() = stream
 
   def isAvailable = avail
 }
