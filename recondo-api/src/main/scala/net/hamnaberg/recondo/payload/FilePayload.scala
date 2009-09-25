@@ -13,7 +13,7 @@ case class FilePayload(val file: File, mimeType: MIMEType) extends Payload {
   
   val MIMEType = mimeType;
 
-  def inputStream = if (isAvailable) new FileInputStream(file) else ClosedInputStream.CLOSED_INPUT_STREAM
+  def inputStream = if (available) new FileInputStream(file) else ClosedInputStream.CLOSED_INPUT_STREAM
 
-  def isAvailable = file.exists && file.canRead
+  def available = file.exists && file.canRead
 }

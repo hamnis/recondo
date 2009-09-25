@@ -8,26 +8,23 @@ import net.hamnaberg.recondo.{Payload, MIMEType}
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-
 class InputStreamPayload(s: InputStream, mimeType: MIMEType) extends Payload {
-  var avail = false
+  var available = false
   val MIMEType = mimeType;
   val inputStream = new DelegatingInputStream(s) {
     override def read(b: Array[Byte]) = {
-      if (avail) avail = false;
+      if (available) available = false;
       super.read(b)
     }
 
     override def read(b: Array[Byte], off: Int, len: Int) = {
-      if (avail) avail = false;
+      if (available) available = false;
       super.read(b, off, len)
     }
 
     override def read = {
-      if (avail) avail = false;
+      if (available) available = false;
       super.read
     }
   };
-  
-  def isAvailable = avail
 }

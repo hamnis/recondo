@@ -8,17 +8,17 @@ import java.io.{InputStream}
  * @version $Revision: #5 $ $Date: 2008/09/15 $
  */
 trait Payload {
-  def withInputStream[A]()(f: InputStream => A) {
+  def withInputStream[A]()(f: InputStream => A) : A = {
     val is = inputStream()
     try {
       f(is)
     }
     finally {
       is.close()
-    };
+    }
   }
   
-  def inputStream() : InputStream
+  def inputStream : InputStream
   def MIMEType : MIMEType
-  def isAvailable : Boolean
+  def available : Boolean
 }
