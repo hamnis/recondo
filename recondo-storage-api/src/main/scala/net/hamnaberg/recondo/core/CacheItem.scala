@@ -2,6 +2,7 @@ package net.hamnaberg.recondo.core
 
 
 import org.joda.time.{Seconds, DateTime}
+import net.hamnaberg.recondo.{Headers, HeaderConstants, Response, Header}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -9,45 +10,13 @@ import org.joda.time.{Seconds, DateTime}
  */
 
 class CacheItem(val response: Response, val cacheTime: DateTime) {
-  def isStale(): Boolean = {
-    if (response.hasPayload && !response.isPayloadAvailable) {
+  lazy val ttl = CacheItem.calculateTTL(response.headers, 0) 
+  def isStale = {
+    if (response.hasPayload && !response.payloadAvailable) {
       true
     }
     else {
-      val h = response.headers
-      val now = new DateTime()
-      val maxAgeResponse = calculateMaxAge(h.firstHeader(HeaderConstants.CACHE_CONTROL), now.getMillis, cacheTime.getMillis)
-      //val maxAgeRequest = calculateMaxAge(request.headers.firstHeader(HeaderConstants.CACHE_CONTROL), now, cacheTime.getMillis)
-      //if (maxAgeResponse <= 0) return true
-      val expiry = h.firstHeader(HeaderConstants.EXPIRES) match {
-        case Some(x) => {
-          val expiryDate = Header.fromHttpDate(x)
-          Seconds.secondsBetween(now, expiryDate)
-        }
-        case None => Seconds.seconds(-1)
-      }
-      if (maxAgeResponse.getSeconds != -1 && expiry.getSeconds != -1) {
-        return maxAgeResponse.getSeconds <= 0
-      }
-      else if (maxAgeResponse.getSeconds > 0 && expiry.getSeconds == -1) {
-        return false
-      }
-      else if (maxAgeResponse.getSeconds == -1 && expiry.getSeconds > 0) {
-        return false
-      }
-      true
-    }
-  }
-
-  private[this] def calculateMaxAge(cacheControlHeader: Option[Header], now: Long, cacheTime: Long):Seconds = {
-    cacheControlHeader match {
-      case Some(x) if (x.value contains "max-age") => {
-        val ma = CacheItem.stringToLong(x.directives("max-age") getOrElse("0"))
-        val age = now - cacheTime
-        val remaining = ((ma * 1000L) - age) / 1000L
-        Seconds.seconds(remaining.toInt)
-      }
-      case _ => Seconds.seconds(-1)
+      ttl - Seconds.secondsBetween(cacheTime, new DateTime).getSeconds <= 0
     }
   }
 }
@@ -55,12 +24,23 @@ class CacheItem(val response: Response, val cacheTime: DateTime) {
 object CacheItem {
   def apply(response: Response) = new CacheItem(response, new DateTime())
 
-  def stringToLong(s: String): Long = {
-      try {
-        java.lang.Long.parseLong(s)
+  def calculateTTL(headers: Headers, default: Int): Int = {
+    if (headers.contains(HeaderConstants.CACHE_CONTROL)) {
+      val header = headers.first(HeaderConstants.CACHE_CONTROL)
+      if (header.directives contains "max-age") {
+        (header.directives("max-age") getOrElse "0").toInt
       }
-      catch {
-        case e:NumberFormatException => -1L 
+      else {
+        0
       }
+    }
+    else if (headers contains(HeaderConstants.EXPIRES)) {
+      val expires = Header.fromHttpDate(headers.first(HeaderConstants.EXPIRES))
+      val date = Header.fromHttpDate(headers.first(HeaderConstants.DATE))
+      Seconds.secondsBetween(date, expires).getSeconds
+    }
+    else {
+      default
+    }
   }
 }

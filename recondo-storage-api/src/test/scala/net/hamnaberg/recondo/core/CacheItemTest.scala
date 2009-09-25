@@ -1,10 +1,11 @@
 package net.hamnaberg.recondo.core
 
 
-import org.joda.time.{DateTime, DateTimeUtils}
 import org.junit.Test
 import org.junit.Assert._
 import org.mockito.Mockito
+import net.hamnaberg.recondo.{Payload, HeaderConstants, Header, Headers}
+import org.joda.time.{Seconds, DateTime, DateTimeUtils}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -35,7 +36,7 @@ class CacheItemTest {
     val dateTime = new DateTime(2009, 7, 27, 22, 51, 12, 0)
     val now = dateTime.plusSeconds(4)
     val payload = Mockito.mock(classOf[Payload])
-    Mockito.when(payload.isAvailable).thenReturn(false)
+    Mockito.when(payload.available).thenReturn(false)
 
     val item = new CacheItem(createResponse(Headers() + Header(HeaderConstants.CACHE_CONTROL, "max-age=5"), Some(payload)), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
@@ -54,9 +55,9 @@ class CacheItemTest {
     val item = new CacheItem(createResponse(Headers() ++ headers, None), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
     assertFalse("item was stale", item.isStale)
-    DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(1).getMillis)
-    assertTrue("item was not stale", item.isStale)
-    DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(2).getMillis)
+    DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(5).getMillis)
+    assertFalse("item was not stale", item.isStale)
+    DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(10).getMillis)
     assertTrue("item was not stale", item.isStale)
   }
 

@@ -9,7 +9,7 @@ import java.io.{InputStream}
  */
 trait Payload {
   def withInputStream[A]()(f: InputStream => A) : A = {
-    val is = inputStream()
+    val is = inputStream
     try {
       f(is)
     }

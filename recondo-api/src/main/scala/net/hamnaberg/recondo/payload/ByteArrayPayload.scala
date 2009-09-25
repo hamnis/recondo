@@ -12,11 +12,10 @@ import net.hamnaberg.recondo.{Payload, MIMEType}
 
 class ByteArrayPayload(stream: InputStream, m: MIMEType) extends Payload {
   val bytes = IOUtils.toByteArray(stream)
-  val mimeType = m;
+  val MIMEType = m;
+  val available = true
 
   def inputStream = new ByteArrayInputStream(bytes)
 
-  def getMIMEType = mimeType
 
-  def isAvailable = true
 }

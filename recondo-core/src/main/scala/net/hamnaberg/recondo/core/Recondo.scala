@@ -3,6 +3,7 @@ package net.hamnaberg.recondo.core
 import java.io.IOException
 import Helper._
 import net.hamnaberg.recondo._
+import net.hamnaberg.recondo.Method._
 import resolver.ResponseResolver
 
 /**
@@ -138,7 +139,7 @@ private[core] object Helper {
   }
 
   def prepareConditionalRequest(request: Request, response: Response): Request = {
-    if (response.isPayloadAvailable) {
+    if (response.payloadAvailable) {
       response.ETag match {
         case Some(v) => request.conditionals(request.conditionals.addIfNoneMatch(v))
         case None => request

@@ -65,7 +65,7 @@ object Status {
   case object REQUEST_ENTITY_TOO_LARGE extends Status(413, "Request Entity Too Large");
   case object REQUEST_URI_TOO_LONG extends Status(414, "Request-URI Too Long");
   case object UNSUPPORTED_MEDIA_TYPE extends Status(415, "Unsupported Media Type");
-  case object REQUESTED_RANGE_NOT_SATISFIABLE extends Status(416, "Requested Range Not Satisfiable");
+  case object REQUESTED_RANGE_NOT_SATISFIABLE extends Status(416, "Requested Range Not Sat  isfiable");
   case object EXPECTATION_FAILED extends Status(417, "Expectation Failed");
   case object INTERNAL_SERVER_ERROR extends Status(500, "Internal Server Error");
   case object NOT_IMPLEMENTED extends Status(501, "Not Implemented");

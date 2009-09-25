@@ -36,7 +36,7 @@ class FileStorage(val baseDirectory:File) extends Storage {
   def insertImpl(key: Key, item: Response) = {
     val payload = item.payload match {
       case Some(x) if (x.isInstanceOf[FilePayload]) => Some(x)
-      case Some(x) => Some(new FilePayload(manager.createFile(key, x.inputStream), x.getMIMEType))
+      case Some(x) => Some(new FilePayload(manager.createFile(key, x.inputStream), x.MIMEType))
       case None => None
     }
     val cacheItem = CacheItem(new Response(item.status, item.headers, payload))

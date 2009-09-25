@@ -33,7 +33,7 @@ class MemoryStorage extends Storage {
   def insertImpl(key: Key, response: Response) = {
     val payload = response.payload match {
       case Some(p) if (p.isInstanceOf[ByteArrayPayload]) => Some(p)
-      case Some(p) => Some(new ByteArrayPayload(p.inputStream, p.getMIMEType))
+      case Some(p) => Some(new ByteArrayPayload(p.inputStream, p.MIMEType))
       case None => None
     }
     val res = CacheItem(new Response(response.status, response.headers, payload))

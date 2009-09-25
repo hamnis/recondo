@@ -13,9 +13,9 @@ trait PayloadContainer {
       case _ => false
     }
   }
-  def isPayloadAvailable: Boolean = {
+  def payloadAvailable: Boolean = {
     payload match {
-      case Some(p) => p.isAvailable
+      case Some(p) => p.available
       case _ => false
     }
   }
