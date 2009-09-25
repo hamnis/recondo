@@ -8,7 +8,6 @@ import net.hamnaberg.recondo.{Headers, HeaderConstants, Response, Header}
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-
 class CacheItem(val response: Response, val cacheTime: DateTime) {
   lazy val ttl = CacheItem.calculateTTL(response.headers, 0) 
   def isStale = {
@@ -16,13 +15,15 @@ class CacheItem(val response: Response, val cacheTime: DateTime) {
       true
     }
     else {
-      ttl - Seconds.secondsBetween(cacheTime, new DateTime).getSeconds <= 0
+      ttl - age <= 0
     }
   }
+
+  private def age = Seconds.secondsBetween(cacheTime, new DateTime).getSeconds  
 }
 
 object CacheItem {
-  def apply(response: Response) = new CacheItem(response, new DateTime())
+  def apply(response: Response) = new CacheItem(response, new DateTime)
 
   def calculateTTL(headers: Headers, default: Int): Int = {
     if (headers.contains(HeaderConstants.CACHE_CONTROL)) {
