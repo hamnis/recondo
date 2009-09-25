@@ -1,5 +1,6 @@
 package net.hamnaberg.recondo.core
 
+import net.hamnaberg.recondo.{Header, Request}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

@@ -5,7 +5,8 @@ import java.io.{ByteArrayInputStream, InputStream}
 import java.net.URI
 import collection.mutable.SynchronizedMap
 import collection.mutable.HashMap
-import payload.ByteArrayPayload
+import net.hamnaberg.recondo.{Response, Request}
+import net.hamnaberg.recondo.payload.ByteArrayPayload
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

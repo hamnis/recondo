@@ -1,9 +1,9 @@
 package net.hamnaberg.recondo.core
 
 import java.io.IOException
-import resolver.ResponseResolver
-import Method._
 import Helper._
+import net.hamnaberg.recondo._
+import resolver.ResponseResolver
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

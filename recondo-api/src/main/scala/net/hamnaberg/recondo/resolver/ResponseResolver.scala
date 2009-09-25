@@ -2,6 +2,7 @@ package net.hamnaberg.recondo.resolver
 
 
 import java.io.IOException
+import net.hamnaberg.recondo.{Response, Request}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

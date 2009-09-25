@@ -2,6 +2,7 @@ package net.hamnaberg.recondo.core
 
 
 import java.net.URI
+import net.hamnaberg.recondo.{Response, Request}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

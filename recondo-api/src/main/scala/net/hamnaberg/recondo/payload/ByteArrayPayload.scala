@@ -3,6 +3,7 @@ package net.hamnaberg.recondo.payload
 
 import java.io.{InputStream, ByteArrayInputStream}
 import org.apache.commons.io.IOUtils
+import net.hamnaberg.recondo.{Payload, MIMEType}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>

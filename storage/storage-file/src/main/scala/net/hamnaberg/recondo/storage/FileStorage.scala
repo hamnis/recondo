@@ -1,12 +1,12 @@
 package net.hamnaberg.recondo.storage
 
 
-import core.{CacheItem, Key, Storage}
 import java.io.File
 import java.net.URI
 import collection.mutable
-import payload.FilePayload
-
+import net.hamnaberg.recondo.core.{CacheItem, Key, Storage}
+import net.hamnaberg.recondo.{Request, Response}
+import net.hamnaberg.recondo.payload.FilePayload
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $

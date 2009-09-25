@@ -19,6 +19,6 @@ trait Payload {
   }
   
   def inputStream() : InputStream
-  def getMIMEType() : MIMEType
+  def MIMEType : MIMEType
   def isAvailable : Boolean
 }

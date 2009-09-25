@@ -2,14 +2,16 @@ package net.hamnaberg.recondo.payload
 
 
 import java.io.InputStream
+import net.hamnaberg.recondo.{Payload, MIMEType}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
 
-class InputStreamPayload(s: InputStream, val mimeType: MIMEType) extends Payload {
+class InputStreamPayload(s: InputStream, mimeType: MIMEType) extends Payload {
   var avail = false
+  val MIMEType = mimeType;
   val inputStream = new DelegatingInputStream(s) {
     override def read(b: Array[Byte]) = {
       if (avail) avail = false;
@@ -27,7 +29,5 @@ class InputStreamPayload(s: InputStream, val mimeType: MIMEType) extends Payload
     }
   };
   
-  def getMIMEType() = mimeType
-
   def isAvailable = avail
 }

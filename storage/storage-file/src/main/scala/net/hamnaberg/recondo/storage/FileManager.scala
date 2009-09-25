@@ -1,8 +1,8 @@
 package net.hamnaberg.recondo.storage
 
-import core.{Vary, Key}
 import java.io._
 import org.apache.commons.codec.digest.DigestUtils
+import net.hamnaberg.recondo.core.{Vary, Key}
 
 private[recondo] class FileManager(baseDirectory: File) {
   val files = FileManager.ensureDirectoryExists(new File(baseDirectory, "files"))
