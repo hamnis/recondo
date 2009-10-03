@@ -56,14 +56,10 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     val resolvedResponse = executeRequest(request, item)
     
     item match {
-      case Some(x) => {
-        if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) {
+      case Some(x) if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) => {
           updateCacheFromResolved(request, resolvedResponse, x.response)
-        }
-        else {
-          resolvedResponse
-        }
       }
+      case Some(x) => resolvedResponse
       case None if(isCacheableResponse(resolvedResponse)) => storage.insert(request, resolvedResponse)
       case None => resolvedResponse
     }
@@ -80,10 +76,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   private[this] def executeRequest(request: Request, item: Option[CacheItem]) = {
       try {
         val resolved = resolver.resolve(request)
-        resolved match {
-          case Some(x) => x
-          case None => throw new RuntimeException("No response from resolver")
-        }
+        resolved.getOrElse(error("No response from resolver"))
       }
       catch {
         case e:IOException => item match {
@@ -113,19 +106,11 @@ private[core] object Helper {
 
   def isSafeRequest(r: Request): Boolean = safeMethods contains r.method
 
-  def isCacheableResponse(response: Response) = {
-    if (cacheableStatuses.contains(response.status)) {
-      response.headers.isCacheable
-    }
-    else {
-      false
-    }
-  }
+  def isCacheableResponse(response: Response) = cacheableStatuses.contains(response.status) && response.headers.isCacheable
 
   def isCacheableRequest(request: Request) = {
-    def analyzeCacheControlHeader(h: Option[String]) = h match {
-      case Some(v) => !((v contains "no-cache") || (v contains "no-store"))
-      case None => false
+    def analyzeCacheControlHeader(h: Option[String]) = {
+      h.map(v => ((v contains "no-cache") || (v contains "no-store"))).getOrElse(false)
     }
 
     request match {
@@ -134,16 +119,14 @@ private[core] object Helper {
     }
   }
 
+  //TODO: implement
   def warn(response: Response) = {
     response
   }
 
   def prepareConditionalRequest(request: Request, response: Response): Request = {
     if (response.payloadAvailable) {
-      response.ETag match {
-        case Some(v) => request.conditionals(request.conditionals.addIfNoneMatch(v))
-        case None => request
-      }
+      response.ETag.map(v => request.conditionals(request.conditionals.addIfNoneMatch(v))).getOrElse(request)
     }
     else {
       request.conditionals(Conditionals())
