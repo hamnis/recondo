@@ -23,11 +23,4 @@
     <module>storage-file</module>
     <module>storage-derby</module>
   </modules>
-
-<!--
-  <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
-  </build>
--->
 </project>

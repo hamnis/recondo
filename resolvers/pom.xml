@@ -16,7 +16,7 @@
     <dependency>
       <groupId>net.hamnaberg.recondo</groupId>
       <artifactId>recondo-api</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
@@ -25,10 +25,4 @@
     <module>resolvers-httpcomponents-client</module>
     <module>resolvers-commons-httpclient</module>
   </modules>
-
-  <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
-  </build>
-
 </project>
