@@ -33,7 +33,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     else {
       val item = storage.get(request)
       item match {
-        case Some(x) => if (x.isStale) resolve(handleStale(request, x.response), item) else rewriteResponse(request, x.response)
+        case Some(x) => if (x.stale) resolve(handleStale(request, x.response), item) else rewriteResponse(request, x.response)
         case None => unconditionalResolve(request)
       }
     }
