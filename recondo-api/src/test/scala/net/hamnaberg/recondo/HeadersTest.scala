@@ -78,11 +78,12 @@ class HeadersTest {
     Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header("ETag", new Tag("1244").format), Header("Cache-Control", "no-store"))).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header.toHttpDate("Last-Modified", time), Header.toHttpDate("Date", time.minusMinutes(4)))).isCacheable)
     Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header.toHttpDate("Expires", time), Header.toHttpDate("Date", time))).isCacheable)
-    Assert.assertTrue("Headers were not cacheable", (Headers() ++ List(Header.toHttpDate("Expires", time.plusDays(1)), Header.toHttpDate("Date", time))).isCacheable)
+    Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header("Cache-Control", "max-age=50"), Header.toHttpDate("Date", time))).isCacheable)
+    Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header("Cache-Control", "max-age=50"), Header.toHttpDate("Expires", time.plusDays(1)), Header.toHttpDate("Date", time))).isCacheable)
+    Assert.assertFalse("Headers were cacheable", (Headers() ++ List(Header("Cache-Control", "private"), Header.toHttpDate("Expires", time.plusDays(1)), Header.toHttpDate("Date", time))).isCacheable)
+
+    Assert.assertTrue("Headers were not cacheable", (Headers() ++ List(Header.toHttpDate("Expires", time.plusDays(1)), Header("ETag" -> new Tag("123").format), Header.toHttpDate("Date", time))).isCacheable)
     Assert.assertTrue("Headers were not cacheable", (Headers() ++ List(Header.toHttpDate("Last-Modified", time), Header.toHttpDate("Date", time))).isCacheable)
     Assert.assertTrue("Headers were not cacheable", (Headers() ++ List(Header("ETag", new Tag("1244").format), Header("Cache-Control", "max-age=50"), Header.toHttpDate("Date", time))).isCacheable)
-    Assert.assertFalse("Headers were not cacheable", (Headers() ++ List(Header("Cache-Control", "max-age=50"), Header.toHttpDate("Date", time))).isCacheable)
-    Assert.assertTrue("Headers were not cacheable", (Headers() ++ List(Header("Cache-Control", "max-age=50"), Header.toHttpDate("Expires", time.plusDays(1)), Header.toHttpDate("Date", time))).isCacheable)
-    Assert.assertTrue("Headers were not cacheable", (Headers() ++ List(Header("Cache-Control", "private"), Header.toHttpDate("Expires", time.plusDays(1)), Header.toHttpDate("Date", time))).isCacheable)
   }
 }

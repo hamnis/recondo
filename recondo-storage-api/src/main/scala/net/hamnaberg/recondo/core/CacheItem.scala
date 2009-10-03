@@ -10,16 +10,10 @@ import net.hamnaberg.recondo.{Headers, HeaderConstants, Response, Header}
  */
 class CacheItem(val response: Response, val cacheTime: DateTime) {
   lazy val ttl = CacheItem.calculateTTL(response.headers, 0) 
-  def isStale = {
-    if (response.hasPayload && !response.payloadAvailable) {
-      true
-    }
-    else {
-      ttl - age <= 0
-    }
-  }
 
-  private def age = Seconds.secondsBetween(cacheTime, new DateTime).getSeconds  
+  def stale = (response.hasPayload && !response.payloadAvailable) || (ttl - age <= 0)
+
+  private def age = Seconds.secondsBetween(cacheTime, new DateTime).getSeconds
 }
 
 object CacheItem {

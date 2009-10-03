@@ -4,8 +4,8 @@ package net.hamnaberg.recondo.core
 import org.junit.Test
 import org.junit.Assert._
 import org.mockito.Mockito
-import net.hamnaberg.recondo.{Payload, HeaderConstants, Header, Headers}
-import org.joda.time.{Seconds, DateTime, DateTimeUtils}
+import net.hamnaberg.recondo._
+import org.joda.time.{DateTime, DateTimeUtils}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -15,7 +15,7 @@ class CacheItemTest {
   @Test
   def testStaleEmptyResponse {
     val item = CacheItem(createResponse(Headers(), None))
-    assertTrue("item was stale", item.isStale)
+    assertTrue("item was stale", item.stale)
   }
   
   @Test
@@ -24,11 +24,11 @@ class CacheItemTest {
     val now = dateTime.plusSeconds(4)
     val item = new CacheItem(createResponse(Headers() + Header(HeaderConstants.CACHE_CONTROL, "max-age=5"), None), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
-    assertFalse("item was stale", item.isStale)
+    assertFalse("item was stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(1).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(2).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
   }
 
   @Test
@@ -40,11 +40,11 @@ class CacheItemTest {
 
     val item = new CacheItem(createResponse(Headers() + Header(HeaderConstants.CACHE_CONTROL, "max-age=5"), Some(payload)), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
-    assertTrue("item was stale", item.isStale)
+    assertTrue("item was stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(1).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(2).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
   }
 
   @Test
@@ -54,11 +54,11 @@ class CacheItemTest {
     val headers = List(Header.toHttpDate(HeaderConstants.EXPIRES, dateTime.plusSeconds(5)), Header.toHttpDate(HeaderConstants.DATE, dateTime.minusSeconds(5)))
     val item = new CacheItem(createResponse(Headers() ++ headers, None), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
-    assertFalse("item was stale", item.isStale)
+    assertFalse("item was stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(5).getMillis)
-    assertFalse("item was not stale", item.isStale)
+    assertFalse("item was not stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(10).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
   }
 
   @Test
@@ -68,11 +68,11 @@ class CacheItemTest {
     val headers = List(Header(HeaderConstants.CACHE_CONTROL, "max-age=5"), Header.toHttpDate(HeaderConstants.EXPIRES, dateTime.plusSeconds(5)))
     val item = new CacheItem(createResponse(Headers() ++ headers, None), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
-    assertFalse("item was stale", item.isStale)
+    assertFalse("item was stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(1).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(2).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
   }
 
   @Test
@@ -82,11 +82,11 @@ class CacheItemTest {
     val headers = List(Header(HeaderConstants.CACHE_CONTROL, "max-age=4"), Header.toHttpDate(HeaderConstants.EXPIRES, dateTime.plusSeconds(5)))
     val item = new CacheItem(createResponse(Headers() ++ headers, None), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(1).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(2).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
   }
 
   @Test
@@ -96,11 +96,11 @@ class CacheItemTest {
     val headers = List(Header(HeaderConstants.CACHE_CONTROL, "max-age=6"), Header.toHttpDate(HeaderConstants.EXPIRES, dateTime.plusSeconds(5)))
     val item = new CacheItem(createResponse(Headers() ++ headers, None), dateTime)
     DateTimeUtils.setCurrentMillisFixed(now.getMillis)
-    assertFalse("item was stale", item.isStale)
+    assertFalse("item was stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(1).getMillis)
-    assertFalse("item was stale", item.isStale)
+    assertFalse("item was stale", item.stale)
     DateTimeUtils.setCurrentMillisFixed(now.plusSeconds(2).getMillis)
-    assertTrue("item was not stale", item.isStale)
+    assertTrue("item was not stale", item.stale)
   }
 
   def createResponse(headers: Headers, payload: Option[Payload]) = {

@@ -8,7 +8,7 @@ import java.io.{InputStream}
  * @version $Revision: #5 $ $Date: 2008/09/15 $
  */
 trait Payload {
-  def withInputStream[A]()(f: InputStream => A) : A = {
+  def using[A]()(f: InputStream => A) : A = {
     val is = inputStream
     try {
       f(is)

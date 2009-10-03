@@ -9,24 +9,18 @@ import org.joda.time.DateTime
  */
 class Response(val status: Status, val headers: Headers, val payload: Option[Payload]) extends PayloadContainer {
   lazy val ETag: Option[Tag] = {
-    headers firstHeaderValue("ETag") match {
-      case Some(value) => Some(Tag(value))
-      case _ => None
-    }
+    val header = headers firstHeaderValue ("ETag")
+    header.map(x => Some(Tag(x))) getOrElse None
   }
   
   lazy val lastModified : Option[DateTime] = {
-    headers firstHeader("LastModified") match {
-      case Some(h) => Some(Header.fromHttpDate(h))
-      case _ => None
-    }
+    val header = headers firstHeader ("Last-Modified")
+    header.map(x => Some(Header.fromHttpDate(x))) getOrElse None
   }
 
   lazy val allowedMethods : Set[Method] = {
-    headers firstHeader "Allow" match {
-      case Some(x) => Set() ++ x.directives.keySet map {y => Method(y)}
-      case _ => Set()
-    }    
+    val header = headers firstHeader("Allow");
+    header.map(Set() ++ _.directives.keySet.map(Method(_))).getOrElse(Set())
   }
 }
 

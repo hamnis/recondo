@@ -132,17 +132,14 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     if (contains(Header(VARY, "*"))) return false
     val interestingHeaderNames = Set(CACHE_CONTROL, PRAGMA, EXPIRES, LAST_MODIFIED)
     val cacheableHeaders = new Headers(headers.filter(interestingHeaderNames contains _._1)).toList
-    val dateHeaderValue = firstHeader(DATE) match {
-      case Some(h) => Header.fromHttpDate(h)
-      case None => return false;
-    }
+    val dateHeaderValue = firstHeader(DATE).map(Header.fromHttpDate(_)).getOrElse(return false)
 
     for (h <- cacheableHeaders) {
       if (!analyzeCachability(h, dateHeaderValue)) {
         return false
       }
     }
-    contains(LAST_MODIFIED) || contains(ETAG) || contains(EXPIRES)
+    contains(LAST_MODIFIED) || contains(ETAG)
   }
 
   private def analyzeCachability(h: Header, dateHeaderValue: DateTime): Boolean = h match {

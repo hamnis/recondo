@@ -6,17 +6,10 @@ package net.hamnaberg.recondo
  */
 
 trait PayloadContainer {
+
   def payload : Option[Payload]
-  def hasPayload : Boolean = {
-    payload match {
-      case Some(p) => true
-      case _ => false
-    }
-  }
-  def payloadAvailable: Boolean = {
-    payload match {
-      case Some(p) => p.available
-      case _ => false
-    }
-  }
+
+  def hasPayload : Boolean = payload.map(x => true).getOrElse(false)
+
+  def payloadAvailable: Boolean = payload.map(_.available).getOrElse(false)
 }
