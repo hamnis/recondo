@@ -21,6 +21,6 @@
 
   <modules>
     <module>storage-file</module>
-    <module>storage-derby</module>
+    <module>storage-hsql</module>
   </modules>
 </project>
