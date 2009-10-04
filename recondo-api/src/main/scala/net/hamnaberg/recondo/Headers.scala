@@ -41,9 +41,13 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
   }
 
   def +(header: Header): Headers = {
-
     val heads = headers.get(header.name).getOrElse(Nil)
-    new Headers(headers + (header.name -> (header.value :: heads)))
+    if (!heads.contains(header.value)) {
+      new Headers(headers + (header.name -> (header.value :: heads)))
+    }
+    else {
+      this      
+    }
   }
 
   def -(header: Header): Headers = {

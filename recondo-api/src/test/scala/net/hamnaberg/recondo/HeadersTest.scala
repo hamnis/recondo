@@ -39,6 +39,15 @@ class HeadersTest {
   }
 
   @Test
+  def testAddSameHeaderTwice() {
+    val h = Headers() + Header("Allow", "GET") + Header("Allow", "GET") 
+    Assert.assertFalse("Headers was not empty", h.isEmpty)
+    Assert.assertEquals("Headers was not empty", 1, h.size)
+    Assert.assertEquals("Headers was not empty", 1, h.toList.size)
+  }
+
+
+  @Test
   def testAddHeaders() {
     val h = Headers() ++ List(Header("Allow", "GET"))
     Assert.assertFalse("Headers was not empty", h.isEmpty)
