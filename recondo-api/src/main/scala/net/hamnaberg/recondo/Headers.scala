@@ -17,28 +17,21 @@ import HeaderConstants._
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
-  private[this] val headers = Map() ++ h
+class Headers(h: Map[String, List[String]]) extends Iterable[Header] {
+  private[recondo] val headers = Map() ++ h
 
   def this() = this(Map());
 
-  def first(name: String): Header = headers(name).reverse.first
+  def first(name: String): Header = headers(name).map(e => new Header(name, e)).reverse.first
 
   def firstHeader(name: String): Option[Header] = getHeaders(name).reverse.firstOption
 
   def firstHeaderValue(name: String): Option[String] = {
-    firstHeader(name) match {
-      case Some(header) => Some(header.value);
-      case None => None
-    }
+    firstHeader(name).map(h => Some(h.value)).getOrElse(None)
   }
 
   def getHeaders(name: String): List[Header] = {
-    val h = headers get name
-    h match {
-      case Some(x) => x
-      case None => Nil
-    }
+    headers.get(name).map(v => v.map(new Header(name, _))).getOrElse(Nil)    
   }
 
   override def isEmpty: Boolean = headers.isEmpty
@@ -50,44 +43,27 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
   }
 
   def +(header: Header): Headers = {
-    val h = add(getHeaders(header.name), header)
-    h match {
-      case List() => this
-      case x => {
-        val heads = headers + (header.name -> x)
-        new Headers(heads)
-      }
-    }
+
+    val heads = headers.get(header.name).getOrElse(Nil)
+    new Headers(headers + (header.name -> (header.value :: heads)))
   }
 
   def -(header: Header): Headers = {
-    val x = getHeaders(header.name) - header;
+    val x = headers.get(header.name).map(_ - header.value).getOrElse(Nil) 
     x match {
       case List() => new Headers(headers - header.name)
       case x => new Headers(headers + (header.name -> x))
     }
   }
 
-  def -(header: String): Headers = {
-    new Headers(headers - header)
+  def -(headerName: String): Headers = {
+    new Headers(headers - headerName)
   }
-  def --(header: Iterable[String]): Headers = {
-    new Headers(headers -- header)
+  def --(headerNames: Iterable[String]): Headers = {
+    new Headers(headers -- headerNames)
   }
 
-  def ++(heads: Iterable[Header]): Headers = {
-    var headers = this.headers
-    heads foreach {
-      header => {
-        val res = add(getHeaders(header.name), header)
-        res match {
-          case Nil =>
-          case x => headers += (header.name -> x)
-        }
-      }
-    }
-    new Headers(headers)
-  }
+  def ++(heads: Iterable[Header]): Headers = heads.foldLeft(this){_ + _}
 
   def contains(name: String) = !getHeaders(name).isEmpty
 
@@ -117,7 +93,7 @@ class Headers(h: Map[String, List[Header]]) extends Iterable[Header] {
     val iterable = for{
       (x, y) <- headers
       z <- y
-    } yield z
+    } yield new Header(x, z)
     iterable.elements
   }
   
