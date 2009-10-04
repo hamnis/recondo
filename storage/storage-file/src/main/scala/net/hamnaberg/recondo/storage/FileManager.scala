@@ -7,8 +7,8 @@ import net.hamnaberg.recondo.core.{Vary, Key}
 private[recondo] class FileManager(baseDirectory: File) {
   val files = FileManager.ensureDirectoryExists(new File(baseDirectory, "files"))
 
-  def createFile(key: Key, stream: InputStream) = {
-    val file = resolve(files, key)
+  def createDataFile(key: Key, stream: InputStream) = {
+    val file = resolve(key, true)
     val out = new FileOutputStream(file)
     try {
       StreamUtils.copy(stream, out)
@@ -20,14 +20,19 @@ private[recondo] class FileManager(baseDirectory: File) {
     file
   }
 
-  private def resolve(baseDirectory: File, key: Key) = {
+  def resolve(key: Key, data: Boolean) = {
     val uriSha = DigestUtils.shaHex(key.uri.toString)
-    val uriFolder = FileManager.ensureDirectoryExists(new File(baseDirectory, uriSha))
+    val uriFolder = FileManager.ensureDirectoryExists(new File(files, uriSha))
     val filename = key.vary match {
       case Vary(x) if (x.isEmpty) => "default"
       case x => DigestUtils.shaHex(x.toString)
     }
-    new File(uriFolder, filename)
+    if (data) {
+      new File(uriFolder, filename + ".data")
+    }
+    else {
+      new File(uriFolder, filename)
+    }
   }
 }
 
