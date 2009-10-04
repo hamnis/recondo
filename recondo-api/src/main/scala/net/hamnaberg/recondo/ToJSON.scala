@@ -14,5 +14,5 @@ trait ToJSON {
 }
 
 trait FromJSON[T] {
-    def fromJson(json: JValue): T 
+    private[recondo] def fromJson(json: JValue): T 
 }
