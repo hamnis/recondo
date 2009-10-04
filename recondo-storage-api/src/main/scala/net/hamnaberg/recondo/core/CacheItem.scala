@@ -10,18 +10,12 @@ import net.hamnaberg.recondo._
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-class CacheItem(val response: Response, val cacheTime: DateTime) extends ToJSON {
+class CacheItem(val response: Response, val cacheTime: DateTime) {
   lazy val ttl = CacheItem.calculateTTL(response.headers, 0) 
 
   def stale = (response.hasPayload && !response.payloadAvailable) || (ttl - age <= 0)
 
   private def age = Seconds.secondsBetween(cacheTime, new DateTime).getSeconds
-
-  def json = ("item" ->
-            ("cache-time" -> DateTimeFormat.fullDateTime().print(cacheTime)) ~
-            ("status" -> response.status.code) ~
-            ("headers" -> response.headers.json))
-
 }
 
 object CacheItem {

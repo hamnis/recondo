@@ -1,14 +1,14 @@
 package net.hamnaberg.recondo.storage
 
 
-import java.io.File
 import java.net.URI
 import collection.mutable
 import net.hamnaberg.recondo.core.{CacheItem, Key, Storage}
-import net.hamnaberg.recondo.{Request, Response}
 import net.hamnaberg.recondo.payload.FilePayload
 import util.concurrent.locks.ReentrantReadWriteLock
-import org.joda.time.{DateTime, DateTimeUtils}
+import org.joda.time.{DateTimeUtils}
+import net.hamnaberg.recondo._
+import java.io._
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -86,7 +86,13 @@ class FileStorage(val baseDirectory:File) extends Storage {
     }
   }
 
-  private def saveToDisk() {
+  //TODO: implement
+  private[this] def saveToDisk() {
+    
+  }
+
+  //TODO: implement
+  private[this] def readFromDisk() {
 
   }
 }
@@ -96,22 +102,3 @@ object FileStorage {
   val PERSISTENT_TIMEOUT = 60000L;
 }
 
-
-class StoreableCacheItem(response: Response, cacheTime: DateTime) extends CacheItem(response, cacheTime) {
-  import net.liftweb.json.JsonDSL._
-  
-  override def json = {
-    val json = super.json
-    if (response.hasPayload) {
-      json ~ ("payload" -> response.payload.map{case FilePayload(f, t) => ("file" -> f.getAbsolutePath) ~ ("mime-type" -> t.toString)}.get)
-    }
-    else {
-      json
-    }
-  }
-}
-private object StoreableCacheItem {
-  def apply(response: Response) = {
-    new StoreableCacheItem(response, new DateTime)
-  }
-}

@@ -3,7 +3,7 @@ package net.hamnaberg.recondo
 
 import org.joda.time.DateTime
 import HeaderConstants._
-import net.liftweb.json.JsonAST.{JString, JArray, JField, JObject}
+import net.liftweb.json.JsonAST._
 
 /**
  * TODO:
@@ -91,7 +91,9 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
     iterable.elements
   }
 
-  private[recondo] def json = JObject(headers.toList.map{ case (name, values) => JField(name, JArray(values.map(JString)))})
+  private[recondo] def json = JObject(headers.toList.map {
+    case (name, values) => JField(name, JArray(values.map(JString)))
+  })
   
   private[recondo] def isCacheable: Boolean = {
     if (contains(Header(VARY, "*"))) return false
@@ -120,8 +122,16 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
   }
 }
 
-object Headers {
+object Headers extends FromJSON[Headers] {
   def apply(): Headers = {
     new Headers(Map.empty)
+  }
+
+  private[recondo] def fromJson(json: JValue) = {
+    val headers = for {
+      JField(name, JArray(x)) <- json
+      JString(value) <- x
+    } yield new Header(name, value)
+    Headers() ++ headers
   }
 }
