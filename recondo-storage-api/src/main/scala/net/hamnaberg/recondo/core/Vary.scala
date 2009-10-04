@@ -6,6 +6,7 @@ import net.hamnaberg.recondo.{Header, Request}
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
+@serializable
 case class Vary(variations : Map[String, String]) {
 
   def this() = this(Map.empty)

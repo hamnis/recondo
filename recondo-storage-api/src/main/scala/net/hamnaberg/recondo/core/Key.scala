@@ -8,6 +8,8 @@ import net.hamnaberg.recondo.{Request, Response, HeaderConstants}
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : $
  */
+@SerialVersionUID(1L)
+@serializable
 case class Key(uri: URI, vary: Vary)
 
 object Key {

@@ -3,21 +3,19 @@ package net.hamnaberg.recondo
 
 import org.joda.time.DateTime
 import HeaderConstants._
+import net.liftweb.json.JsonAST.{JString, JArray, JField, JObject}
 
 /**
  * TODO:
- * - make the headers a Map of String, String.
- * -- extends a map like I do in httpcache4j.
  * - comparison of strings are always done case insensitive.
  *
  */
-
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-class Headers(h: Map[String, List[String]]) extends Iterable[Header] {
+class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON {
   private[recondo] val headers = Map() ++ h
 
   def this() = this(Map());
@@ -79,15 +77,7 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] {
     }
   }
 
-  override def hashCode = 31 * elements.toList.hashCode
-
-  override def toString = {
-    val builder = new StringBuilder
-    for (h <- this) {
-      builder.append(h.name).append(": ").append(h.value).append("\r\n")
-    }
-    builder.toString
-  }
+  override def hashCode = 31 * elements.toList.hashCode  
 
   def elements: Iterator[Header] = {
     val iterable = for{
@@ -96,17 +86,12 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] {
     } yield new Header(x, z)
     iterable.elements
   }
-  
-  private def add(list: List[Header], header: Header): List[Header] = {
-    list match {
-      case List() => List(header)
-      case x => if (x contains header) Nil else header :: x
-    }
-  }
 
+  private[recondo] def json = JObject(headers.toList.map{ case (name, values) => JField(name, JArray(values.map(JString)))})
+  
   private[recondo] def isCacheable: Boolean = {
     if (contains(Header(VARY, "*"))) return false
-    val interestingHeaderNames = Set(CACHE_CONTROL, PRAGMA, EXPIRES, LAST_MODIFIED)
+    val interestingHeaderNames = Set(CACHE_CONTROL, EXPIRES, LAST_MODIFIED)
     val cacheableHeaders = new Headers(headers.filter(interestingHeaderNames contains _._1)).toList
     val dateHeaderValue = firstHeader(DATE).map(Header.fromHttpDate(_)).getOrElse(return false)
 
@@ -123,7 +108,6 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] {
       val expire = firstHeader(EXPIRES).map {analyzeCachability(_, dateHeaderValue)} getOrElse false
       (v.contains("max-age") || expire) && !(v.contains("no-store") || v.contains("no-cache"))
     }
-    case Header(PRAGMA, v) => !(v.contains("no-cache") || v.contains("no-store"))
     case Header(EXPIRES, _) => dateHeaderValue.isBefore(Header.fromHttpDate(h))
     case Header(LAST_MODIFIED, _) => {
       val lastModified = Header.fromHttpDate(h)
