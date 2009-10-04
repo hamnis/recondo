@@ -28,7 +28,6 @@ object CacheItem {
   def apply(response: Response) = new CacheItem(response, new DateTime)
 
   def calculateTTL(headers: Headers, default: Int): Int = {
-    headers.firstHeader(HeaderConstants.CACHE_CONTROL).map{ _.value.contains("max-age")}
     if (headers.contains(HeaderConstants.CACHE_CONTROL)) {
       val header = headers.first(HeaderConstants.CACHE_CONTROL)
       if (header.directives contains "max-age") {
