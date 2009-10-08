@@ -39,7 +39,7 @@ private[recondo] class FileManager(baseDirectory: File) {
 private[recondo] object FileManager {
   private def ensureDirectoryExists(directory: File) = {
     if (!directory.exists() && !directory.mkdirs()) {
-      throw new IllegalArgumentException(String.format("Directory %s did not exist, and could not be created", directory));
+      throw new IllegalArgumentException("Directory %s did not exist, and could not be created".format(directory));
     }
     directory
   }
