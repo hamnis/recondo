@@ -6,7 +6,7 @@ import net.hamnaberg.recondo.{Response, Request}
 import java.io.File
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
 class HypersonicStorage(path: File) extends Storage {
