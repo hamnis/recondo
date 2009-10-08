@@ -20,14 +20,14 @@ case class Request(uri: URI,
     new Request(uri, method, headers, conditionals, preferences, credentials, payload)
   }
 
-  private[recondo] def allHeaders() = {
-    val h  = headers ++ conditionals.toHeaders ++ preferences.toHeaders
+  private[recondo] def withAllHeaders() = {
+    val h  = headers replace conditionals.toHeaders replace preferences.toHeaders
     if (hasPayload) {
       val heads = h - HeaderConstants.CONTENT_TYPE
-      heads + payload.map{p => new Header(HeaderConstants.CONTENT_TYPE, p.MIMEType.toString)}.getOrElse(error("No payload!?!"))
+      headers(heads + payload.map{p => new Header(HeaderConstants.CONTENT_TYPE, p.MIMEType.toString)}.getOrElse(error("No payload!?!")))
     }
     else {
-      h
+      headers(h)
     }
   }
 

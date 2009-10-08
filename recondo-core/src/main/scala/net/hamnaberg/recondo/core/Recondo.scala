@@ -5,6 +5,7 @@ import Helper._
 import net.hamnaberg.recondo._
 import net.hamnaberg.recondo.Method._
 import resolver.ResponseResolver
+import java.net.ConnectException
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -14,7 +15,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   def request(r: Request): Response = request(r, false)
 
   def request(r: Request, force: Boolean): Response = {
-    val request = mergeHeaders(r)
+    val request = r.withAllHeaders
     if (!isCacheableRequest(request)) {
       if (!isSafeRequest(request)) {
         storage.invalidate(r.uri)
@@ -45,7 +46,8 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
 
   private[this] def rewriteResponse(request: Request, response: Response): Response = {
     response.ETag match {
-      case Some(x) if (request.method == GET && request.conditionals.ifNonMatch.contains(x)) => new Response(Status.NOT_MODIFIED, response.headers, None)
+      case Some(x) if (request.method == GET && request.conditionals.ifNonMatch.contains(x)) =>
+        new Response(Status.NOT_MODIFIED, response.headers, None)
       case _ => response
     }
   }
@@ -54,13 +56,13 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
 
   private[this] def resolve(request: Request, item: Option[CacheItem]) = {
     val resolvedResponse = executeRequest(request, item)
-    
+
     item match {
       case Some(x) if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) => {
-          updateCacheFromResolved(request, resolvedResponse, x.response)
+        updateCacheFromResolved(request, resolvedResponse, x.response)
       }
       case Some(x) => resolvedResponse
-      case None if(isCacheableResponse(resolvedResponse)) => storage.insert(request, resolvedResponse)
+      case None if (isCacheableResponse(resolvedResponse)) => storage.insert(request, resolvedResponse)
       case None => resolvedResponse
     }
   }
@@ -74,20 +76,27 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
   }
 
   private[this] def executeRequest(request: Request, item: Option[CacheItem]) = {
-      try {
-        val resolved = resolver.resolve(request)
-        resolved.getOrElse(error("No response from resolver"))
-      }
-      catch {
-        case e:IOException => item match {
-          case Some(x) => Helper.warn(x.response)
-          case None => throw new RuntimeException(e)
-        }
-      }
+    try {
+      val resolved = resolver.resolve(request)
+      resolved.getOrElse(error("No response from resolver"))
+    }
+    catch {
+      case e: ConnectException => item.map {
+        x =>
+                addWarnings(x.response, Warning.DISCONNECT_OPERATION_WARNING, Warning.STALE_WARNING)
+      }.getOrElse(throw new RuntimeException(e))
+      case e: IOException => item.map {
+        x =>
+                addWarnings(x.response, Warning.REVALIDATE_FAILED_WARNING, Warning.STALE_WARNING)
+      }.getOrElse(throw new RuntimeException(e))
+    }
   }
-}
 
-object Recondo
+  private[this] def addWarnings(response: Response, warn: Warning*) = {
+    new Response(response.status, response.headers ++ warn.map(_.toHeader), response.payload)
+  }
+
+}
 
 private[core] object Helper {
   private val safeMethods = Set(GET, HEAD, TRACE, OPTIONS)
@@ -114,14 +123,9 @@ private[core] object Helper {
     }
 
     request match {
-      case Request(_, GET, h, _, _, _) => analyzeCacheControlHeader(h.firstHeaderValue(HeaderConstants.CACHE_CONTROL))
+      case Request(_, GET, h, _, _, _, _) => analyzeCacheControlHeader(h.firstHeaderValue(HeaderConstants.CACHE_CONTROL))
       case _ => false
     }
-  }
-
-  //TODO: implement
-  def warn(response: Response) = {
-    response
   }
 
   def prepareConditionalRequest(request: Request, response: Response): Request = {
@@ -131,13 +135,5 @@ private[core] object Helper {
     else {
       request.conditionals(Conditionals())
     }
-  }
-  
-  def mergeHeaders(r: Request) = {
-    var condititonalHeaders = r.conditionals.toHeaders
-    var heads = r.headers;
-    condititonalHeaders foreach {heads -= _.name}
-    heads ++ condititonalHeaders
-    r.headers(heads)
   }
 }

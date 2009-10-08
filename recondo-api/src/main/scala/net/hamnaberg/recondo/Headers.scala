@@ -67,6 +67,11 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
 
   def ++(heads: Iterable[Header]): Headers = heads.foldLeft(this){_ + _}
 
+  def replace(heads: Iterable[Header]): Headers = {
+    val after = this -- heads.map(_.name)
+    after ++ heads
+  }
+
   def contains(name: String) = !getHeaders(name).isEmpty
 
   private[recondo] def asMap = headers;
