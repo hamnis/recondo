@@ -1,6 +1,7 @@
 package net.hamnaberg.recondo.storage
 
 import java.io._
+import net.hamnaberg.recondo.util._
 import org.apache.commons.codec.digest.DigestUtils
 import net.hamnaberg.recondo.core.{Vary, Key}
 

@@ -1,4 +1,4 @@
-package net.hamnaberg.recondo.storage
+package net.hamnaberg.recondo.util
 
 
 import java.io.{IOException, Closeable, InputStream, OutputStream}

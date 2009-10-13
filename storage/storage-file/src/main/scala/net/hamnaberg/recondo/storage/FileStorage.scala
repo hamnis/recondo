@@ -5,7 +5,7 @@ import java.net.URI
 import collection.mutable
 import net.hamnaberg.recondo.core.{CacheItem, Key, Storage}
 import net.hamnaberg.recondo.payload.FilePayload
-import util.concurrent.locks.ReentrantReadWriteLock
+import scala.util.concurrent.locks.ReentrantReadWriteLock
 import org.joda.time.{DateTimeUtils}
 import net.hamnaberg.recondo._
 import java.io._
