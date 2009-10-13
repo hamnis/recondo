@@ -12,9 +12,10 @@ import java.net.ConnectException
  * @version $Revision : $
  */
 class Recondo(val storage: Storage, val resolver: ResponseResolver) {
-  def request(r: Request): Response = request(r, false)
+  def execute(r: Request): Response = execute(r, false)
 
-  def request(r: Request, force: Boolean): Response = {
+  //TODO: 2.8 default params....
+  def execute(r: Request, force: Boolean): Response = {
     val request = r.withAllHeaders
     if (!isCacheableRequest(request)) {
       if (!isSafeRequest(request)) {
@@ -52,7 +53,7 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     }
   }
 
-  private[this] def unconditionalResolve(r: Request): Response = resolve(r, None)
+  private[this] def unconditionalResolve(request: Request): Response = resolve(request, None)
 
   private[this] def resolve(request: Request, item: Option[CacheItem]) = {
     val resolvedResponse = executeRequest(request, item)
@@ -82,12 +83,10 @@ class Recondo(val storage: Storage, val resolver: ResponseResolver) {
     }
     catch {
       case e: ConnectException => item.map {
-        x =>
-                addWarnings(x.response, Warning.DISCONNECT_OPERATION_WARNING, Warning.STALE_WARNING)
+        x => addWarnings(x.response, Warning.DISCONNECT_OPERATION_WARNING, Warning.STALE_WARNING)
       }.getOrElse(throw new RuntimeException(e))
       case e: IOException => item.map {
-        x =>
-                addWarnings(x.response, Warning.REVALIDATE_FAILED_WARNING, Warning.STALE_WARNING)
+        x => addWarnings(x.response, Warning.REVALIDATE_FAILED_WARNING, Warning.STALE_WARNING)
       }.getOrElse(throw new RuntimeException(e))
     }
   }
