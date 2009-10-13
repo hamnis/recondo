@@ -33,6 +33,10 @@ object Header {
     new Header(tuple._1, tuple._2)
   }
 
+  implicit def dateHeader(header: Tuple2[String, DateTime]) = {
+    toHttpDate(header._1, header._2)
+  }
+
   def fromHttpDate(header: Header) = {
     val formatter = DateTimeFormat.forPattern(PATTERN_RFC1123).
             withZone(DateTimeZone.forID("UTC")).
