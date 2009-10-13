@@ -118,7 +118,7 @@ private[core] object Helper {
 
   def isCacheableRequest(request: Request) = {
     def analyzeCacheControlHeader(h: Option[String]) = {
-      h.map(v => ((v contains "no-cache") || (v contains "no-store"))).getOrElse(false)
+      h.map(v => !((v contains "no-cache") || (v contains "no-store"))).getOrElse(true)
     }
 
     request match {

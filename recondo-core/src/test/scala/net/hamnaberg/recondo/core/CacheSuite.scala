@@ -9,7 +9,6 @@ import net.hamnaberg.recondo.resolver.ResponseResolver
 import java.net.URI
 import net.hamnaberg.recondo._
 import org.joda.time.DateTime
-import org.junit.Test
 
 /**
  * 
@@ -17,14 +16,16 @@ import org.junit.Test
  */
 class CacheSuite extends FunSuite with MockitoSugar {
   val uri = "http://unknown.com/resource/123"
+  val request = Request(uri)
 
-  test("test execute GET request with no contents in cache storage") {
+
+  test("test none cacheable GET request with no contents in cache storage") {
     val resolver = mock[ResponseResolver]
     when(resolver.resolve(isA(classOf[Request]))).
-    thenReturn(Some(new Response(Status.OK, Headers() + Header.toHttpDate(HeaderConstants.DATE, new DateTime), None)))
+    thenReturn(Some(new Response(Status.OK, Headers() + (HeaderConstants.DATE -> new DateTime), None)))
     val storage = new CountingNullStorage
     val cache = new Cache(storage, resolver)
-    val response = cache.execute(Request(uri))
+    val response = cache.execute(request)
     assert (response.headers contains HeaderConstants.DATE)
     assert (storage.size === 0)
   }
@@ -42,15 +43,12 @@ class CacheSuite extends FunSuite with MockitoSugar {
       )
     when(resolver.resolve(isA(classOf[Request]))).
     thenReturn(Some(resolved))
-    val request = Request(uri)
-    val storage = mock[Storage]
+    val storage = new CountingNullStorage
     val cache = new Cache(storage, resolver)
-    when(storage.insert(request, resolved)).thenReturn(resolved)
-    when(storage.size).thenReturn(1)
     val response = cache.execute(request)
-    assert(response != null)
     assert(Helper.isCacheableResponse(response) === true)
-    assert (storage.size === 1)    
+    verify(resolver, times(1)).resolve(isA(classOf[Request]))
+    assert (storage.size === 1)
   }
 }
 
