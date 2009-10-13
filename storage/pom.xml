@@ -21,6 +21,5 @@
 
   <modules>
     <module>storage-file</module>
-    <module>storage-hsql</module>
   </modules>
 </project>
