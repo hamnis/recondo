@@ -11,7 +11,7 @@ import java.net.ConnectException
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : $
  */
-class Recondo(val storage: Storage, val resolver: ResponseResolver) {
+class Cache(val storage: Storage, val resolver: ResponseResolver) {
   def execute(r: Request): Response = execute(r, false)
 
   //TODO: 2.8 default params....
