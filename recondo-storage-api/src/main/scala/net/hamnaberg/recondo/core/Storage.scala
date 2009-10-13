@@ -26,4 +26,6 @@ trait Storage {
   protected def invalidate(key: Key): Unit
 
   def clear(): Unit
+
+  def size : Int
 }

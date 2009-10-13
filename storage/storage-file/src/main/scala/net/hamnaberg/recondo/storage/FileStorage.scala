@@ -79,6 +79,8 @@ class FileStorage(val baseDirectory:File) extends Storage {
     }
   }
 
+  def size = map.size
+
   private def clearPayload(response: Response) {
     response.payload match {
       case Some(FilePayload(x, _)) => x.delete
@@ -95,6 +97,8 @@ class FileStorage(val baseDirectory:File) extends Storage {
   private[this] def readFromDisk() {
 
   }
+
+
 }
 
 object FileStorage {

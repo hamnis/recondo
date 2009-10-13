@@ -43,4 +43,6 @@ class MemoryStorage extends Storage {
 
   def get(request: Request) = map.find(x => x._1.uri == request.uri && x._1.vary.matches(request)).map(_._2)
 
+
+  def size = map.size
 }
