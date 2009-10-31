@@ -12,6 +12,7 @@ import java.net.ConnectException
  * @version $Revision : $
  */
 class Cache(val storage: Storage, val resolver: ResponseResolver) {
+  val stats = new CacheStats
   def execute(r: Request): Response = execute(r, false)
 
   //TODO: 2.8 default params....
@@ -35,8 +36,8 @@ class Cache(val storage: Storage, val resolver: ResponseResolver) {
     else {
       val item = storage.get(request)
       item match {
-        case Some(x) => if (x.stale) resolve(handleStale(request, x.response), item) else rewriteResponse(request, x.response)
-        case None => unconditionalResolve(request)
+        case Some(x) => stats.hit(); if (x.stale) resolve(handleStale(request, x.response), item) else rewriteResponse(request, x.response)
+        case None => stats.miss(); unconditionalResolve(request)
       }
     }
   }

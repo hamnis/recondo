@@ -22,6 +22,10 @@ class Response(val status: Status, val headers: Headers, val payload: Option[Pay
     val header = headers firstHeader("Allow");
     header.map(Set() ++ _.directives.keySet.map(Method(_))).getOrElse(Set())
   }
+
+  def consume() {
+    payload.map(p => p.inputStream.close)
+  }
 }
 
 sealed abstract case class Status(code: Int, message: String) {
