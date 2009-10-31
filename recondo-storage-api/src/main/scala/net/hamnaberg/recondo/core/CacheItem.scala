@@ -2,8 +2,6 @@ package net.hamnaberg.recondo.core
 
 
 import org.joda.time.{Seconds, DateTime}
-import org.joda.time.format.{DateTimeFormat}
-import net.liftweb.json.JsonDSL._
 import net.hamnaberg.recondo._
 
 /**
@@ -32,8 +30,9 @@ object CacheItem {
       }
     }
     else if (headers contains(HeaderConstants.EXPIRES)) {
-      val expires = Header.fromHttpDate(headers.first(HeaderConstants.EXPIRES))
-      val date = Header.fromHttpDate(headers.first(HeaderConstants.DATE))
+      val now = new DateTime()
+      val expires = Header.fromHttpDate(headers.first(HeaderConstants.EXPIRES)).getOrElse(now)
+      val date = Header.fromHttpDate(headers.first(HeaderConstants.DATE)).getOrElse(now)
       Seconds.secondsBetween(date, expires).getSeconds
     }
     else {

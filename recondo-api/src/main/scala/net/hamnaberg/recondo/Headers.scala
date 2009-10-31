@@ -15,8 +15,9 @@ import net.liftweb.json.JsonAST._
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON {
-  private[recondo] val headers = Map() ++ h
+class Headers private(h: Map[CaseInsensitiveString, List[String]]) extends Iterable[Header] with ToJSON {
+  import Headers._
+  private[this] val headers = Map() ++ h
 
   def this() = this(Map());
 
@@ -43,7 +44,7 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
   def +(header: Header): Headers = {
     val heads = headers.get(header.name).getOrElse(Nil)
     if (!heads.contains(header.value)) {
-      new Headers(headers + (header.name -> (header.value :: heads)))
+      new Headers(headers + (new CaseInsensitiveString(header.name) -> (header.value :: heads)))
     }
     else {
       this      
@@ -54,7 +55,7 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
     val x = headers.get(header.name).map(_ - header.value).getOrElse(Nil) 
     x match {
       case List() => new Headers(headers - header.name)
-      case x => new Headers(headers + (header.name -> x))
+      case x => new Headers(headers + (new CaseInsensitiveString(header.name) -> x))
     }
   }
 
@@ -62,7 +63,7 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
     new Headers(headers - headerName)
   }
   def --(headerNames: Iterable[String]): Headers = {
-    new Headers(headers -- headerNames)
+    new Headers(headers -- headerNames.map(x => new CaseInsensitiveString(x)))
   }
 
   def ++(heads: Iterable[Header]): Headers = heads.foldLeft(this){_ + _}
@@ -73,8 +74,6 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
   }
 
   def contains(name: String) = !getHeaders(name).isEmpty
-
-  private[recondo] def asMap = headers;
 
   override def equals(obj: Any) = {
     if (obj.isInstanceOf[Headers]) {
@@ -104,24 +103,24 @@ class Headers(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON
     if (contains(Header(VARY, "*"))) return false
     val interestingHeaderNames = Set(CACHE_CONTROL, EXPIRES, LAST_MODIFIED)
     val cacheableHeaders = new Headers(headers.filter(interestingHeaderNames contains _._1)).toList
-    val dateHeaderValue = firstHeader(DATE).map(Header.fromHttpDate(_)).getOrElse(return false)
-
+    val dateHeaderValue = firstHeader(DATE).map(Header.fromHttpDate(_)).map{case Some(x) => x}.getOrElse(return false)
+    val now = new DateTime
     for (h <- cacheableHeaders) {
-      if (!analyzeCachability(h, dateHeaderValue)) {
+      if (!analyzeCachability(h, dateHeaderValue, now)) {
         return false
       }
     }
     contains(LAST_MODIFIED) || contains(ETAG)
   }
 
-  private def analyzeCachability(h: Header, dateHeaderValue: DateTime): Boolean = h match {
+  private def analyzeCachability(h: Header, dateHeaderValue: DateTime, now: DateTime): Boolean = h match {
     case Header(CACHE_CONTROL, v) => {
-      val expire = firstHeader(EXPIRES).map {analyzeCachability(_, dateHeaderValue)} getOrElse false
+      val expire = firstHeader(EXPIRES).map {analyzeCachability(_, dateHeaderValue, now)} getOrElse false
       (v.contains("max-age") || expire) && !(v.contains("no-store") || v.contains("no-cache"))
     }
-    case Header(EXPIRES, _) => dateHeaderValue.isBefore(Header.fromHttpDate(h))
+    case Header(EXPIRES, _) => dateHeaderValue.isBefore(Header.fromHttpDate(h).getOrElse(now))
     case Header(LAST_MODIFIED, _) => {
-      val lastModified = Header.fromHttpDate(h)
+      val lastModified = Header.fromHttpDate(h).getOrElse(now)
       dateHeaderValue.isAfter(lastModified) || dateHeaderValue.equals(lastModified)
     }
   }
@@ -139,4 +138,7 @@ object Headers extends FromJSON[Headers] {
     } yield new Header(name, value)
     Headers() ++ headers
   }
+
+  implicit def convertToCaseInsensitive(orignal: String) : CaseInsensitiveString = new CaseInsensitiveString(orignal)  
+  implicit def convertToString(caseInsensitive: CaseInsensitiveString) : String = caseInsensitive.original  
 }

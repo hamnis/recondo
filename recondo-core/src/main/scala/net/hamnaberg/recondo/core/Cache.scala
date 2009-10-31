@@ -69,9 +69,9 @@ class Cache(val storage: Storage, val resolver: ResponseResolver) {
 
   private[this] def updateCacheFromResolved(request: Request, resolvedResponse: Response, cachedResponse: Response): Response = {
     val updatedHeaders = resolvedResponse.headers -- Helper.unmodifiableHeaders
-    val cachedHeaders = cachedResponse.headers.asMap
-    val newHeaders = cachedHeaders ++ updatedHeaders.asMap
-    val response = new Response(cachedResponse.status, new Headers(newHeaders), cachedResponse.payload)
+    val cachedHeaders = cachedResponse.headers
+    val newHeaders = cachedHeaders ++ updatedHeaders
+    val response = new Response(cachedResponse.status, newHeaders, cachedResponse.payload)
     storage.update(request, response)
   }
 

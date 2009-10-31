@@ -66,7 +66,12 @@ object Header {
     val formatter = DateTimeFormat.forPattern(PATTERN_RFC1123).
             withZone(DateTimeZone.forID("UTC")).
             withLocale(Locale.US);
-    formatter.parseDateTime(header.value);
+    try {
+      Some(formatter.parseDateTime(header.value))
+    }
+    catch {
+      case e:IllegalArgumentException => None
+    };
   }
 
   def toHttpDate(name: String, time: DateTime) = {

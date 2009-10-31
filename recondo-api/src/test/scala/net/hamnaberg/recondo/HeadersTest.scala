@@ -66,7 +66,7 @@ class HeadersTest {
     val allow = Header("Allow", "GET")
     val h = Headers() ++ List(allow, Header("If-Match", new Tag("1234", false).format))
     Assert.assertFalse("Headers was empty", h.isEmpty)
-    Assert.assertEquals("Headers was not empty", 2, h.size)
+    Assert.assertEquals("Headers has the wrong size", 2, h.size)
     val h2 = h - allow
     Assert.assertFalse("Headers was not empty", h2.isEmpty)
     Assert.assertEquals("Headers had the wrong size", 1, h2.size)

@@ -15,7 +15,7 @@ class Response(val status: Status, val headers: Headers, val payload: Option[Pay
   
   lazy val lastModified : Option[DateTime] = {
     val header = headers firstHeader ("Last-Modified")
-    header.map(x => Some(Header.fromHttpDate(x))) getOrElse None
+    header.map(Header.fromHttpDate(_)).map{case Some(x) => x}
   }
 
   lazy val allowedMethods : Set[Method] = {

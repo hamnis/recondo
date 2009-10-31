@@ -17,6 +17,12 @@ class HeaderTest {
   }
 
   @Test
+  def testIllegalDateHeader {
+    Assert.assertFalse("Illegal Date header was legal",Header.fromHttpDate(new Header("foo", "-1")).isDefined)
+    Assert.assertFalse("Illegal Date header was legal",Header.fromHttpDate(new Header("date", "akdslj")).isDefined)
+  }
+
+  @Test
   def testEquals {
     val header = new Header("foo", "foo")
     val header2 = new Header("fOo", "foo")
