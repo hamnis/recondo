@@ -24,7 +24,9 @@ class Response(val status: Status, val headers: Headers, val payload: Option[Pay
   }
 }
 
-sealed abstract case class Status(code: Int, message: String)
+sealed abstract case class Status(code: Int, message: String) {
+  override def toString = code + " " + message
+}
 
 object Status {
   def apply(code: Int) = code match {
