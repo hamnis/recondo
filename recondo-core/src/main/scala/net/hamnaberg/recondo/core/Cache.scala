@@ -29,7 +29,7 @@ class Cache(val storage: Storage, val resolver: ResponseResolver) {
   }
 
   private[this] def getFromCache(request: Request, force: Boolean): Response = {
-    if (force || request.conditionals.ifNonMatch.contains(Tag.ALL)) {
+    if (force || request.conditionals.ifMatch.contains(Tag.ALL)) {
       unconditionalResolve(request)
     }
     else {
@@ -59,12 +59,11 @@ class Cache(val storage: Storage, val resolver: ResponseResolver) {
     val resolvedResponse = executeRequest(request, item)
 
     item match {
+      case None if (isCacheableResponse(resolvedResponse)) => storage.insert(request, resolvedResponse)
       case Some(x) if (request.method == HEAD || resolvedResponse.status == Status.NOT_MODIFIED) => {
         updateCacheFromResolved(request, resolvedResponse, x.response)
       }
-      case Some(x) => resolvedResponse
-      case None if (isCacheableResponse(resolvedResponse)) => storage.insert(request, resolvedResponse)
-      case None => resolvedResponse
+      case _ => resolvedResponse
     }
   }
 
@@ -117,12 +116,10 @@ private[core] object Helper {
   def isCacheableResponse(response: Response) = cacheableStatuses.contains(response.status) && response.headers.isCacheable
 
   def isCacheableRequest(request: Request) = {
-    def analyzeCacheControlHeader(h: Option[String]) = {
-      h.map(v => !((v contains "no-cache") || (v contains "no-store"))).getOrElse(true)
-    }
-
     request match {
-      case Request(_, GET, h, _, _, _, _) => analyzeCacheControlHeader(h.firstHeaderValue(HeaderConstants.CACHE_CONTROL))
+      case Request(_, GET, h, _, _, _, _) => h.firstHeaderValue(HeaderConstants.CACHE_CONTROL).map{
+        v => !((v contains "no-cache") || (v contains "no-store"))
+      }.getOrElse(true)
       case _ => false
     }
   }
