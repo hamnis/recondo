@@ -118,6 +118,7 @@
     <module>recondo-core</module>
     <module>resolvers</module>
     <module>storage</module>
+    <module>examples</module>
   </modules>
 
 
