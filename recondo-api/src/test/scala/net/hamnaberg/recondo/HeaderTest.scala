@@ -17,6 +17,20 @@ class HeaderTest {
   }
 
   @Test
+  def testEquals {
+    val header = new Header("foo", "foo")
+    val header2 = new Header("fOo", "foo")
+    val header3 = new Header("FOO", "foo")
+    val header4 = new Header("fOO", "foo")
+    Assert.assertEquals(header, header2);
+    Assert.assertEquals(header, header3);
+    Assert.assertEquals(header, header4);
+    Assert.assertEquals(header2, header3);
+    Assert.assertEquals(header2, header4);
+    Assert.assertEquals(header3, header4);
+  }
+
+  @Test
   def testSimpleHeaderDirectives {
     val header = new Header("foo", "foo")
     Assert.assertEquals(header, Header(Tuple2("foo", "foo")));

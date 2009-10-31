@@ -9,7 +9,7 @@ import org.joda.time.{DateTime, DateTimeZone}
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-case class Header(name: String, value: String) {
+final case class Header(name: String, value: String) {
   lazy val directives: Map[String, Option[String]] = parseValue(value)
 
   override def toString() = name + ": " + value
@@ -23,6 +23,31 @@ case class Header(name: String, value: String) {
       }
     }
     Map() ++ foo
+  }
+
+
+  override def hashCode = {
+    var hc = 31 + name.toLowerCase(Locale.ENGLISH).hashCode;
+    hc += 31 * value.hashCode
+    hc
+  }
+
+
+  override def equals(obj: Any) = {
+    if (obj == null) {
+      false;
+    }
+    if (obj.isInstanceOf[Header]) {
+      false;
+    }
+    val h = obj.asInstanceOf[Header]
+    if (!name.equalsIgnoreCase(h.name)) {
+      false;
+    }
+    if (!value.equals(h.name)) {
+      false
+    }
+    true
   }
 }
 
