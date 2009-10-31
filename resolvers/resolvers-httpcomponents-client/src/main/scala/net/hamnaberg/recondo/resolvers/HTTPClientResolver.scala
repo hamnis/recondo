@@ -7,10 +7,11 @@ import net.hamnaberg.recondo.util._
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods._
 import net.hamnaberg.recondo._
-import org.apache.http.entity.{BasicHttpEntity, InputStreamEntity}
 import org.apache.http.message.BasicHeader
 import org.apache.http.{HttpEntityEnclosingRequest, HttpEntity, HttpResponse, Header => AHeader}
 import payload.{InputStreamPayload, DelegatingInputStream}
+
+
 class HTTPClientResolver(val client: HttpClient) extends ResponseResolver {
   def resolve(request: Request) = {
     client.execute(request)
@@ -35,7 +36,7 @@ class HTTPClientResolver(val client: HttpClient) extends ResponseResolver {
 
   private implicit def convert(response: HttpResponse) : Option[Response] = {
     val headers: Headers = Headers() ++ response.getAllHeaders
-    val mimeType = headers.firstHeaderValue("Content-Type") map(x => MIMEType(x)) getOrElse MIMEType.ALL 
+    val mimeType = headers.firstHeaderValue("Content-Type") map(MIMEType(_)) getOrElse MIMEType.ALL 
     Some(new Response(Status(response.getStatusLine.getStatusCode), headers, toPayload(response.getEntity, mimeType)))
   }
 
@@ -47,7 +48,7 @@ class HTTPClientResolver(val client: HttpClient) extends ResponseResolver {
     try {
       entity match {
         case null => None
-        case x if (x.getContent != null) => Some(new InputStreamPayload(new HttpEntityInputStream(x), mimeType))
+        case x => Some(new InputStreamPayload(new HttpEntityInputStream(x), mimeType))
       }
     }
     catch {
@@ -62,6 +63,7 @@ class HTTPClientResolver(val client: HttpClient) extends ResponseResolver {
   private class HttpEntityInputStream(val entity: HttpEntity) extends DelegatingInputStream(entity.getContent) {
 
     override def close() {
+      super.close()
       entity.consumeContent();
     }
   }
