@@ -1,13 +1,12 @@
-package net.hamnaberg.recondo
+package net.hamnaberg.recondo.util
 
 import java.util.Locale
-import java.text.Collator
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-case class CaseInsensitiveString(original: String) {
+private[util] class CaseInsensitiveString(val original: String) {
 
   override def equals(obj: Any) : Boolean = {
     if (obj == null) return false
