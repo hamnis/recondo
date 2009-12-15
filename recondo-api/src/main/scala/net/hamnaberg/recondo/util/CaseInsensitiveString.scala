@@ -6,7 +6,7 @@ import java.util.Locale
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-private[util] class CaseInsensitiveString(val original: String) {
+class CaseInsensitiveString(val original: String) {
 
   override def equals(obj: Any) : Boolean = {
     if (obj == null) return false

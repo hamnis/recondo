@@ -4,6 +4,7 @@ package net.hamnaberg.recondo
 import org.joda.time.DateTime
 import HeaderConstants._
 import net.liftweb.json.JsonAST._
+import net.hamnaberg.recondo.util.CaseInsensitiveString
 
 /**
  * TODO:
