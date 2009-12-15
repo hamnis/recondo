@@ -4,23 +4,17 @@ package net.hamnaberg.recondo
 import org.joda.time.DateTime
 import HeaderConstants._
 import net.liftweb.json.JsonAST._
-import net.hamnaberg.recondo.util.CaseInsensitiveString
-
-/**
- * TODO:
- * - comparison of strings are always done case insensitive.
- *
- */
+import util.{CaseInsensitiveMap}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision : #5 $ $Date: 2008/09/15 $
  */
-class Headers private(h: Map[CaseInsensitiveString, List[String]]) extends Iterable[Header] with ToJSON {
+class Headers private(h: Map[String, List[String]]) extends Iterable[Header] with ToJSON {
   import Headers._
   private[this] val headers = Map() ++ h
 
-  def this() = this(Map());
+  def this() = this(new CaseInsensitiveMap);
 
   def first(name: String): Header = headers(name).map(e => new Header(name, e)).reverse.first
 
@@ -45,7 +39,7 @@ class Headers private(h: Map[CaseInsensitiveString, List[String]]) extends Itera
   def +(header: Header): Headers = {
     val heads = headers.get(header.name).getOrElse(Nil)
     if (!heads.contains(header.value)) {
-      new Headers(headers + (new CaseInsensitiveString(header.name) -> (header.value :: heads)))
+      new Headers(headers + (header.name -> (header.value :: heads)))
     }
     else {
       this      
@@ -56,7 +50,7 @@ class Headers private(h: Map[CaseInsensitiveString, List[String]]) extends Itera
     val x = headers.get(header.name).map(_ - header.value).getOrElse(Nil) 
     x match {
       case List() => new Headers(headers - header.name)
-      case x => new Headers(headers + (new CaseInsensitiveString(header.name) -> x))
+      case x => new Headers(headers + (header.name -> x))
     }
   }
 
@@ -64,7 +58,7 @@ class Headers private(h: Map[CaseInsensitiveString, List[String]]) extends Itera
     new Headers(headers - headerName)
   }
   def --(headerNames: Iterable[String]): Headers = {
-    new Headers(headers -- headerNames.map(x => new CaseInsensitiveString(x)))
+    new Headers(headers -- headerNames)
   }
 
   def ++(heads: Iterable[Header]): Headers = heads.foldLeft(this){_ + _}
@@ -139,7 +133,4 @@ object Headers extends FromJSON[Headers] {
     } yield new Header(name, value)
     Headers() ++ headers
   }
-
-  implicit def convertToCaseInsensitive(orignal: String) : CaseInsensitiveString = new CaseInsensitiveString(orignal)  
-  implicit def convertToString(caseInsensitive: CaseInsensitiveString) : String = caseInsensitive.original  
 }
