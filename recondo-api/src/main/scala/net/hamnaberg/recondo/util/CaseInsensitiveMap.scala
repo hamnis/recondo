@@ -3,7 +3,7 @@ package net.hamnaberg.recondo.util
 import collection.immutable.{Map, HashMap}
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
 class CaseInsensitiveMap[T] private(map: Map[CaseInsensitiveString, T]) extends Map[String, T] {
