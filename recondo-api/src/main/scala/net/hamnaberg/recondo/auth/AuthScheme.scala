@@ -7,7 +7,7 @@ import java.util.Locale
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-class Scheme(header:Header) {
+class AuthScheme(header:Header) {
   require(header.name.toLowerCase(Locale.ENGLISH) match {
     case "www-authenticate"|"proxy-authenticate" => true
     case _ => false

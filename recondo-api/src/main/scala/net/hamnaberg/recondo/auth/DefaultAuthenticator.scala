@@ -7,7 +7,7 @@ import net.hamnaberg.recondo.{Response, Request}
  * @version $Revision: $
  */
 class DefaultAuthenticator extends Authenticator {  
-  private[this] val strategies = createStrategies;
+  private[this] val strategies = createStrategies
 
   protected def createStrategies : List[AuthStrategy] = List()
 

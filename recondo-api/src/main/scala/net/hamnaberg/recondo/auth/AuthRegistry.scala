@@ -8,9 +8,9 @@ import collection.immutable.HashMap
  * @version $Revision : $
  */
 private[auth] class AuthRegistry {
-  var cache : Map[Host, Scheme] = new HashMap[Host, Scheme]()
+  var cache : Map[Host, AuthScheme] = new HashMap[Host, AuthScheme]()
 
-  def register(host: Host, scheme: Scheme) {
+  def register(host: Host, scheme: AuthScheme) {
     cache += host -> scheme
   }
 
