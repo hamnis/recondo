@@ -4,6 +4,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erik@mogensoft.net">Erik Mogensen</p>
  * @version $Revision : $
  */
 class Mutex[T] {
