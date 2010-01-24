@@ -5,7 +5,8 @@ import Helper._
 import net.hamnaberg.recondo._
 import net.hamnaberg.recondo.Method._
 import resolver.ResponseResolver
-import java.net.ConnectException
+import util.Mutex
+import java.net.{URI, ConnectException}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -13,6 +14,7 @@ import java.net.ConnectException
  */
 class Cache(val storage: Storage, val resolver: ResponseResolver) {
   val stats = new CacheStats
+  private val mutex = new Mutex[URI]()
   def execute(r: Request): Response = execute(r, false)
 
   //TODO: 2.8 default params....
@@ -25,7 +27,13 @@ class Cache(val storage: Storage, val resolver: ResponseResolver) {
       executeRequest(request, None)
     }
     else {
-      getFromCache(request, force)
+      mutex.acquire(request.uri)
+      try {
+        getFromCache(request, force)
+      }
+      finally {
+        mutex.release(request.uri)        
+      }
     }
   }
 
