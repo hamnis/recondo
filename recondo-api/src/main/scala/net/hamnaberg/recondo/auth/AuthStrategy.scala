@@ -11,6 +11,7 @@ trait AuthStrategy {
   def supports(scheme: AuthScheme): Boolean
 
   def prepare(request: Request, scheme: AuthScheme): Option[Header]
+  def prepareUsingProxy(request: Request, credentials: Option[Credentials], scheme: AuthScheme) : Option[Header]
 }
 
 class BasicAuthStrategy extends AuthStrategy {
@@ -18,8 +19,8 @@ class BasicAuthStrategy extends AuthStrategy {
     prepare(request, request.credentials, false)
   }
 
-  def prepareUsingProxy(request: Request, credentials: Credentials, scheme: AuthScheme) = {
-    prepare(request, Some(credentials), true)
+  def prepareUsingProxy(request: Request, credentials: Option[Credentials], scheme: AuthScheme) = {
+    prepare(request, credentials, true)
   }
 
   private def prepare(request: Request, credentials: Option[Credentials], proxy: Boolean) = {

@@ -7,5 +7,9 @@ import net.hamnaberg.recondo.Credentials
  * @version $Revision: $
  */
 trait CredentialsProvider {
-  def provide() : Credentials
+  def provide() : Option[Credentials]
+}
+
+class NoProvider extends CredentialsProvider {
+  def provide() = None
 }

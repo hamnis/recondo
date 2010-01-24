@@ -3,10 +3,9 @@ package net.hamnaberg.recondo.auth
 import net.hamnaberg.recondo.{Response, Header, Request, HeaderConstants}
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-
 private[auth] abstract class AuthenticatorBase {
   private[this] val registry = new AuthRegistry
 
@@ -26,12 +25,14 @@ private[auth] abstract class AuthenticatorBase {
 
   private def findSupportingStrategyAndPrepare(request: Request, scheme: AuthScheme) = {
     val supportedStrategy = strategies.find(_.supports(scheme))
-    val authHeaders = supportedStrategy.map(x => x.prepare(request, scheme)).toList
+    val authHeaders = getAuthHeaders(supportedStrategy, request, scheme)
     if (!registry.matches(request.uri)) {
       registry.register(request.uri, scheme)
     }
-    authHeaders.flatMap(x => x).toList
+    authHeaders.toList
   }
+
+  protected def getAuthHeaders(strategy: Option[AuthStrategy], request:Request, scheme:AuthScheme) : Option[Header]
 
   private def maybeAddHeaders(request: Request, headers: Iterable[Header]) = headers match {
     case List() => request
