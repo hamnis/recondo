@@ -9,7 +9,7 @@ import java.net.URI
 class Host(val scheme:String, val hostname: String, val port: Int)
 
 object Host {
-  def apply(uri: URI) = {
+  implicit def apply(uri: URI) = {
     val scheme = uri.getScheme
     val port = scheme match {
       case null => error("No scheme defined, we cannot work with this")

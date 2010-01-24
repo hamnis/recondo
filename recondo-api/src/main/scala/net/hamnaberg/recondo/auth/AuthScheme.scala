@@ -1,13 +1,12 @@
 package net.hamnaberg.recondo.auth
 
-import net.hamnaberg.recondo.{HeaderConstants, Header}
 import java.util.Locale
-
+import net.hamnaberg.recondo.{Header}
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-class AuthScheme(header:Header) {
+class AuthScheme(val header:Header) {
   require(header.name.toLowerCase(Locale.ENGLISH) match {
     case "www-authenticate"|"proxy-authenticate" => true
     case _ => false
@@ -17,4 +16,7 @@ class AuthScheme(header:Header) {
   val realm = directives.get("realm").flatMap(x => x).getOrElse(error("No realm, wrong header? " + header))
 
   private def parseMethod(value: String) = value.substring(0, value.indexOf(" "))
+
+
+  override def toString = "Method: %s, realm: %s, headerValue: %s".format(method, realm, header.value)
 }

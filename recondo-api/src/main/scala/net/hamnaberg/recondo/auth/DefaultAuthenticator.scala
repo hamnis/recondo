@@ -1,17 +1,17 @@
 package net.hamnaberg.recondo.auth
 
-import net.hamnaberg.recondo.{Response, Request}
+import net.hamnaberg.recondo._
+import net.hamnaberg.recondo.Host._
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
- * @version $Revision: $
+ * @version $Revision : $
  */
-class DefaultAuthenticator extends Authenticator {  
-  private[this] val strategies = createStrategies
+class DefaultAuthenticator extends AuthenticatorBase with Authenticator {
+  protected val strategies = List(new BasicAuthStrategy)
+  protected val interestingHeaders = List(HeaderConstants.WWW_AUTHENTICATE)
 
-  protected def createStrategies : List[AuthStrategy] = List()
+  def preparePreemptively(request: Request) = prepareWithOptionalResponse(request, None)
 
-  def preparePreemptively(request: Request) = null
-
-  def prepare(request: Request, response: Response) = null
+  def prepare(request: Request, response: Response) = prepareWithOptionalResponse(request, Some(response))
 }

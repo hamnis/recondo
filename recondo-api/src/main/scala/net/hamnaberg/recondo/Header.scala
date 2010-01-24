@@ -83,13 +83,14 @@ object Header {
 }
 
 object HeaderConstants {
-  val ACCEPT = "Accept";
-  val ACCEPT_LANGUAGE = "Accept-Language";
-  val ACCEPT_CHARSET = "Accept-Charset";
-  val AGE = "Age";
-  val ALLOW = "Allow";
+  val ACCEPT = "Accept"
+  val ACCEPT_LANGUAGE = "Accept-Language"
+  val ACCEPT_CHARSET = "Accept-Charset"
+  val AGE = "Age"
+  val ALLOW = "Allow"
+  val AUTH = "Authorization"
   val CACHE_CONTROL = "Cache-Control"
-  val CONTENT_TYPE = "Content-Type";
+  val CONTENT_TYPE = "Content-Type"
   val DATE = "Date"
   val ETAG = "ETag"
   val EXPIRES = "Expires"
@@ -98,8 +99,11 @@ object HeaderConstants {
   val IF_NONE_MATCH = "If-None-Match"
   val IF_UNMODIFIED_SINCE = "If-Unmodified-Since"
   val LAST_MODIFIED = "Last-Modified"
-  val LOCATION = "Location";
+  val LOCATION = "Location"
   val PRAGMA = "Pragma"
+  val PROXY_AUTHORIZATION = "Proxy-Authorization"
+  val PROXY_AUTHENTICATE = "Proxy-Authenticate"
   val VARY = "Vary"
-  val WARNING = "Warning";
+  val WARNING = "Warning"
+  val WWW_AUTHENTICATE = "WWW-Authenticate"
 }

@@ -1,7 +1,7 @@
 package net.hamnaberg.recondo.auth
 
-import org.apache.commons.codec.binary.Base64
 import net.hamnaberg.recondo._
+import org.apache.commons.codec.binary.{Base64}
 
 /**
  * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
@@ -10,7 +10,7 @@ import net.hamnaberg.recondo._
 trait AuthStrategy {
   def supports(scheme: AuthScheme): Boolean
 
-  def prepare(request: Request, scheme: AuthScheme): Request
+  def prepare(request: Request, scheme: AuthScheme): Option[Header]
 }
 
 class BasicAuthStrategy extends AuthStrategy {
@@ -24,16 +24,16 @@ class BasicAuthStrategy extends AuthStrategy {
 
   private def prepare(request: Request, credentials: Option[Credentials], proxy: Boolean) = {
     credentials match {
+      case None => None
       case Some(UsernamePasswordCredentials(u, p)) => {
-        val headervalue = "Basic " + new String(Base64.encodeBase64("%s:%s".format(u, p).getBytes("UTF-8")))
+        val headerValue = "Basic " + Base64.encodeBase64String("%s:%s".format(u, p).getBytes("UTF-8"))
         if (proxy) {
-          request.headers(request.headers + Header("Proxy-Authorization" -> headervalue))
+          Some(Header(HeaderConstants.PROXY_AUTHORIZATION -> headerValue))
         }
         else {
-          request.headers(request.headers + Header("Authorization" -> headervalue))
+          Some(Header(HeaderConstants.AUTH -> headerValue))
         }
       }
-      case _ => request
     }
   }
 
