@@ -1,12 +1,13 @@
 package net.hamnaberg.recondo.core
 
 import java.util.concurrent.atomic.AtomicLong
+import javax.management.MXBean
 
 /**
- * @author <a href="mailto:erlend@escenic.com">Erlend Hamnaberg</a>
+ * @author <a href="mailto:erlend@hamnaberg.net">Erlend Hamnaberg</a>
  * @version $Revision: $
  */
-
+@MXBean
 class CacheStats {
   val hits = new AtomicLong
   val misses = new AtomicLong
@@ -24,6 +25,11 @@ class CacheStats {
     misses.set(0L)
   }
 
+  def getHits() = hits.get
+
+  def getMisses() = misses.get
+
+  def getHitRatio = getMisses / (getMisses + getHits).asInstanceOf[Double]
 
   override def toString = "Stats[hits: %s, misses: %s]".format(hits.intValue, misses.intValue)
 }
